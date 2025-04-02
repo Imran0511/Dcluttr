@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import styles from "./Sidebar.module.css";
 
 export default function Sidebar() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeTab, setActiveTab] = useState("quick-commerce");
+  const [isChannelsOpen, setIsChannelsOpen] = useState(true);
 
   return (
     <div className={styles.sidebar}>
@@ -90,7 +91,10 @@ export default function Sidebar() {
         </Link>
 
         <div className={styles.navGroup}>
-          <div className={styles.navItem}>
+          <div
+            className={styles.navItem}
+            onClick={() => setIsChannelsOpen(!isChannelsOpen)}
+          >
             <svg
               width="18"
               height="18"
@@ -150,7 +154,9 @@ export default function Sidebar() {
             </svg>
             <span>Channels</span>
             <svg
-              className={styles.chevron}
+              className={`${styles.chevron} ${
+                isChannelsOpen ? styles.chevronOpen : ""
+              }`}
               width="16"
               height="16"
               viewBox="0 0 24 24"
@@ -167,22 +173,24 @@ export default function Sidebar() {
             </svg>
           </div>
 
-          <div className={styles.subMenu}>
-            <Link href="/meta-ads" className={styles.subItem}>
-              Meta Ads
-            </Link>
-            <Link href="/google-ads" className={styles.subItem}>
-              Google Ads
-            </Link>
-            <Link
-              href="/quick-commerce"
-              className={`${styles.subItem} ${
-                activeTab === "quick-commerce" ? styles.active : ""
-              }`}
-            >
-              Quick Commerce
-            </Link>
-          </div>
+          {isChannelsOpen && (
+            <div className={styles.subMenu}>
+              <Link href="/meta-ads" className={styles.subItem}>
+                Meta Ads
+              </Link>
+              <Link href="/google-ads" className={styles.subItem}>
+                Google Ads
+              </Link>
+              <Link
+                href="/quick-commerce"
+                className={`${styles.subItem} ${
+                  activeTab === "quick-commerce" ? styles.active : ""
+                }`}
+              >
+                Quick Commerce
+              </Link>
+            </div>
+          )}
         </div>
 
         <Link href="/creatives" className={styles.navItem}>
@@ -279,7 +287,7 @@ export default function Sidebar() {
         </Link>
         <div className={styles.avatarContainer}>
           <div className={styles.avatar}>
-            <span>PJ</span>
+            <span>SS</span>
           </div>
         </div>
       </div>

@@ -25,107 +25,129 @@ export default function SalesChart() {
     canvas.style.height = `${rect.height}px`;
 
     // Sample data
-    const thisPeriodData = [
-      1.5, 1.6, 1.8, 2.1, 2.3, 2.7, 2.5, 3.0, 3.2, 3.5, 3.7, 3.8, 4.0, 4.2, 4.5,
-    ];
-    const lastPeriodData = [
-      1.3, 1.5, 1.7, 1.9, 2.0, 2.1, 2.3, 2.1, 2.3, 2.5, 2.7, 2.8, 2.9, 3.0, 3.2,
-    ];
+    const thisPeriodData = [2.0, 2.2, 2.5, 3.0, 4.5, 3.0, 3.5];
+    const lastPeriodData = [1.8, 2.0, 2.2, 3.2, 3.5, 3.8, 3.2];
 
-    const maxValue = Math.max(...thisPeriodData, ...lastPeriodData) * 1.1;
     const width = rect.width;
     const height = rect.height;
+    const padding = { top: 10, right: 10, bottom: 30, left: 30 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
 
-    // Draw grid lines
+    // Draw grid lines and labels
     ctx.strokeStyle = "#e5e7eb";
     ctx.lineWidth = 1;
 
-    const gridStep = height / 3;
-    for (let i = 1; i <= 3; i++) {
-      const y = height - i * gridStep;
+    // Y-axis grid lines and labels
+    const ySteps = 4;
+    const yMax = 6.0;
+    const yMin = 1.5;
+    const yStep = (yMax - yMin) / ySteps;
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "12px Inter, sans-serif";
+    ctx.textAlign = "right";
+
+    for (let i = 0; i <= ySteps; i++) {
+      const y = padding.top + (chartHeight * (ySteps - i)) / ySteps;
+      const value = yMin + i * yStep;
+
+      // Grid line
       ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(width - padding.right, y);
       ctx.stroke();
+
+      // Label
+      ctx.fillText(value.toFixed(1), padding.left - 5, y + 4);
     }
 
-    // Draw labels
-    ctx.fillStyle = "#9ca3af";
-    ctx.font = "10px Inter, sans-serif";
+    // X-axis labels
     ctx.textAlign = "center";
+    const xLabels = ["09", "10", "11", "12", "13", "14", "15"];
+    const xStep = chartWidth / (xLabels.length - 1);
 
-    // X-axis labels (days)
-    for (let i = 9; i <= 15; i++) {
-      const x = (i - 9) * (width / (thisPeriodData.length - 1));
-      ctx.fillText(i.toString(), x, height - 5);
-    }
+    xLabels.forEach((label, i) => {
+      const x = padding.left + i * xStep;
+      ctx.fillText(label, x, height - padding.bottom + 15);
+    });
 
-    // Y-axis labels
-    ctx.textAlign = "left";
-    for (let i = 1; i <= 3; i++) {
-      const y = height - i * gridStep;
-      ctx.fillText((i * 1.5).toString(), 5, y - 5);
-    }
+    // Function to convert data point to coordinates
+    const toCoords = (value: number, index: number, data: number[]) => ({
+      x: padding.left + (index * chartWidth) / (data.length - 1),
+      y:
+        padding.top +
+        chartHeight -
+        ((value - yMin) / (yMax - yMin)) * chartHeight,
+    });
 
-    // Draw last period line
-    ctx.strokeStyle = "#d1d5db";
+    // Draw last period line (dotted orange)
+    ctx.strokeStyle = "#fb923c";
     ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
     ctx.beginPath();
-
-    lastPeriodData.forEach((value, index) => {
-      const x = index * (width / (lastPeriodData.length - 1));
-      const y = height - (value / maxValue) * height;
-
-      if (index === 0) {
+    lastPeriodData.forEach((value, i) => {
+      const { x, y } = toCoords(value, i, lastPeriodData);
+      if (i === 0) {
         ctx.moveTo(x, y);
       } else {
         ctx.lineTo(x, y);
       }
     });
-
     ctx.stroke();
 
-    // Draw this period line
-    ctx.strokeStyle = "#10b981";
-    ctx.lineWidth = 2;
+    // Draw this period line with background fill
+    ctx.setLineDash([]);
+
+    // Fill area under the line
     ctx.beginPath();
+    ctx.moveTo(padding.left, height - padding.bottom);
+    thisPeriodData.forEach((value, i) => {
+      const { x, y } = toCoords(value, i, thisPeriodData);
+      ctx.lineTo(x, y);
+    });
+    ctx.lineTo(width - padding.right, height - padding.bottom);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(34, 197, 94, 0.1)";
+    ctx.fill();
 
-    thisPeriodData.forEach((value, index) => {
-      const x = index * (width / (thisPeriodData.length - 1));
-      const y = height - (value / maxValue) * height;
-
-      if (index === 0) {
+    // Draw the line
+    ctx.beginPath();
+    thisPeriodData.forEach((value, i) => {
+      const { x, y } = toCoords(value, i, thisPeriodData);
+      if (i === 0) {
         ctx.moveTo(x, y);
       } else {
         ctx.lineTo(x, y);
       }
     });
-
+    ctx.strokeStyle = "#22c55e";
+    ctx.lineWidth = 2;
     ctx.stroke();
 
     // Add legend
-    const legendY = height - 20;
-    const legendSpacing = 80;
+    const legendY = height - 10;
+    const legendSpacing = 100;
 
     // This month legend
-    ctx.fillStyle = "#10b981";
+    ctx.fillStyle = "#22c55e";
     ctx.beginPath();
-    ctx.arc(15, legendY, 4, 0, Math.PI * 2);
+    ctx.arc(padding.left, legendY, 4, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = "#374151";
     ctx.font = "12px Inter, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("This Month", 25, legendY + 4);
+    ctx.fillText("This Month", padding.left + 10, legendY + 4);
 
     // Last month legend
-    ctx.fillStyle = "#d1d5db";
+    ctx.fillStyle = "#fb923c";
     ctx.beginPath();
-    ctx.arc(15 + legendSpacing, legendY, 4, 0, Math.PI * 2);
+    ctx.arc(padding.left + legendSpacing, legendY, 4, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = "#374151";
-    ctx.fillText("Last Month", 25 + legendSpacing, legendY + 4);
+    ctx.fillText("Last Month", padding.left + legendSpacing + 10, legendY + 4);
   }, []);
 
   return (

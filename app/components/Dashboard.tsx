@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import styles from "./Dashboard.module.css";
-import SalesChart from "./SalesChart";
+
 import ProgressRing from "./ProgressRing";
+import SalesChart from "./SalesChart";
 
 export default function Dashboard() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -13,7 +14,6 @@ export default function Dashboard() {
     "zepto",
     "instamart",
   ]);
-  const [activeTab, setActiveTab] = useState("sku"); // 'sku' or 'city'
   const [skuData, setSkuData] = useState([
     {
       id: 1,
@@ -142,19 +142,19 @@ export default function Dashboard() {
   };
 
   const toggleSKUSelection = (id: number) => {
-    if (activeTab === "sku") {
-      setSkuData(
-        skuData.map((item) =>
-          item.id === id ? { ...item, selected: !item.selected } : item
-        )
-      );
-    } else {
-      setCityData(
-        cityData.map((item) =>
-          item.id === id ? { ...item, selected: !item.selected } : item
-        )
-      );
-    }
+    setSkuData(
+      skuData.map((item) =>
+        item.id === id ? { ...item, selected: !item.selected } : item
+      )
+    );
+  };
+
+  const toggleCitySelection = (id: number) => {
+    setCityData(
+      cityData.map((item) =>
+        item.id === id ? { ...item, selected: !item.selected } : item
+      )
+    );
   };
 
   const totalSales = "125.49";
@@ -477,12 +477,8 @@ export default function Dashboard() {
       <div className={styles.dataSection}>
         <div className={styles.dataSectionHeader}>
           <div className={styles.sectionTitle}>
-            <h2>
-              {activeTab === "sku" ? "SKU level data" : "City level data"}
-            </h2>
-            <p>
-              Analytics for all your {activeTab === "sku" ? "SKUs" : "Cities"}
-            </p>
+            <h2>SKU level data</h2>
+            <p>Analytics for all your SKUs</p>
           </div>
           <div className={styles.filterButton}>
             <span>Filters(1)</span>
@@ -502,25 +498,6 @@ export default function Dashboard() {
               />
             </svg>
           </div>
-        </div>
-
-        <div className={styles.tabs}>
-          <button
-            className={`${styles.tab} ${
-              activeTab === "sku" ? styles.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("sku")}
-          >
-            SKU level data
-          </button>
-          <button
-            className={`${styles.tab} ${
-              activeTab === "city" ? styles.activeTab : ""
-            }`}
-            onClick={() => setActiveTab("city")}
-          >
-            City level data
-          </button>
         </div>
 
         <div className={styles.dataTable}>
@@ -727,13 +704,315 @@ export default function Dashboard() {
           </div>
 
           <div className={styles.tableBody}>
-            {(activeTab === "sku" ? skuData : cityData).map((item) => (
+            {skuData.map((item) => (
               <div key={item.id} className={styles.tableRow}>
                 <div className={styles.tableCell} style={{ width: "40px" }}>
                   <input
                     type="checkbox"
                     checked={item.selected}
                     onChange={() => toggleSKUSelection(item.id)}
+                  />
+                </div>
+                <div className={styles.tableCell} style={{ width: "200px" }}>
+                  {item.name}
+                </div>
+                <div className={styles.tableCell}>
+                  <div>{item.sales}</div>
+                  {item.salesPercentage > 0 && (
+                    <div
+                      className={styles.growthCell}
+                      style={{ color: "var(--success-color)" }}
+                    >
+                      ↑ {item.salesPercentage}%
+                    </div>
+                  )}
+                </div>
+                <div className={styles.tableCell}>{item.outOfStock}</div>
+                <div className={styles.tableCell}>{item.totalInventory}</div>
+                <div className={styles.tableCell}>{item.avgRank}</div>
+                <div className={styles.tableCell}>
+                  <div>{item.estTraffic}</div>
+                  {item.salesPercentage > 0 && (
+                    <div
+                      className={styles.growthCell}
+                      style={{ color: "var(--success-color)" }}
+                    >
+                      ↑ {item.salesPercentage}%
+                    </div>
+                  )}
+                </div>
+                <div className={styles.tableCell}>
+                  <div>{item.estImpressions}</div>
+                  {item.salesPercentage > 0 && (
+                    <div
+                      className={styles.growthCell}
+                      style={{ color: "var(--success-color)" }}
+                    >
+                      ↑ {item.salesPercentage}%
+                    </div>
+                  )}
+                </div>
+                <div className={styles.tableCell}>{item.cr}</div>
+              </div>
+            ))}
+
+            <div className={styles.tableFooter}>
+              <div className={styles.tableCell} style={{ width: "40px" }}></div>
+              <div
+                className={styles.tableCell}
+                style={{ width: "200px", fontWeight: "bold" }}
+              >
+                Total
+              </div>
+              <div className={styles.tableCell}>₹2,93,132.12</div>
+              <div className={styles.tableCell}>16%</div>
+              <div className={styles.tableCell}>2931</div>
+              <div className={styles.tableCell}>8.3</div>
+              <div className={styles.tableCell}>61,985</div>
+              <div className={styles.tableCell}>2,61,768</div>
+              <div className={styles.tableCell}>1.9%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.dataSection}>
+        <div className={styles.dataSectionHeader}>
+          <div className={styles.sectionTitle}>
+            <h2>City level data</h2>
+            <p>Analytics for all your Cities</p>
+          </div>
+          <div className={styles.filterButton}>
+            <span>Filters(1)</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 9L12 15L18 9"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <div className={styles.dataTable}>
+          <div className={styles.tableHeader}>
+            <div
+              className={styles.tableHeaderCell}
+              style={{ width: "40px" }}
+            ></div>
+            <div className={styles.tableHeaderCell} style={{ width: "200px" }}>
+              <div className={styles.headerCellContent}>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 6H20"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M9 12H20"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M9 18H20"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M4 6H5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M4 12H5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M4 18H5"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>SKU Name</span>
+              </div>
+            </div>
+            <div className={styles.tableHeaderCell}>
+              <div className={styles.headerCellContent}>
+                <span>Sales</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className={styles.tableHeaderCell}>
+              <div className={styles.headerCellContent}>
+                <span>Out of Stock</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className={styles.tableHeaderCell}>
+              <div className={styles.headerCellContent}>
+                <span>Total Inventory</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className={styles.tableHeaderCell}>
+              <div className={styles.headerCellContent}>
+                <span>Average Rank</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className={styles.tableHeaderCell}>
+              <div className={styles.headerCellContent}>
+                <span>Est. Traffic</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className={styles.tableHeaderCell}>
+              <div className={styles.headerCellContent}>
+                <span>Est. Impressions</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className={styles.tableHeaderCell}>
+              <div className={styles.headerCellContent}>
+                <span>CR</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.tableBody}>
+            {cityData.map((item) => (
+              <div key={item.id} className={styles.tableRow}>
+                <div className={styles.tableCell} style={{ width: "40px" }}>
+                  <input
+                    type="checkbox"
+                    checked={item.selected}
+                    onChange={() => toggleCitySelection(item.id)}
                   />
                 </div>
                 <div className={styles.tableCell} style={{ width: "200px" }}>
