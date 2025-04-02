@@ -1,5 +1,8 @@
 .dashboard {
-  padding: 20px;
+  /* padding: 20px; */
+  border-width: 2;
+  border-color: rgba(235, 235, 235, 1);
+  border-radius: 10px 10px 0px 0px;
 }
 
 .header {
@@ -7,12 +10,17 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 1);
+  background-color: #ffffff;
 }
 
 .header h1 {
-  font-size: 24px;
+  padding: 20px;
+  font-size: 14px;
   font-weight: bold;
   margin: 0;
+  color: rgba(3, 27, 21, 1);
+  font-weight: 500;
 }
 
 .headerRight {
@@ -48,35 +56,67 @@
 
 .platformTags {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
   margin-bottom: 24px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white;
+  width: 380px;
+  /* margin: 0 auto 24px auto; */
+  margin-left: 20px;
 }
 
 .platformTag {
-  border-radius: 20px;
-  padding: 6px 16px;
-  font-size: 14px;
+  display: flex;
+  /* align-items: center; */
+  gap: 8px;
+  padding: 8px 20px;
+  font-size: 16px;
   cursor: pointer;
-  border: 1px solid transparent;
+  border-radius: 4px;
+  /* border: 1px dashed #1448b1; */
+  background-color: white;
+  flex: 1;
+  justify-content: center;
+}
+
+.platformTag span {
+  font-weight: 500;
+  font-size: 14;
 }
 
 .platformTag.blinkit {
-  background-color: #f0f4c3;
-  color: #827717;
+  color: rgba(2, 112, 86, 1);
+  margin-right: 10px;
 }
 
 .platformTag.zepto {
-  background-color: #d1c4e9;
-  color: #4527a0;
+  color: rgba(3, 27, 21, 0.7);
+  margin-right: 10px;
 }
 
 .platformTag.instamart {
-  background-color: #ffccbc;
-  color: #bf360c;
+  color: rgba(3, 27, 21, 0.7);
 }
 
 .platformTag.active {
-  border: 2px solid currentColor;
+  /* border: 1px solid currentColor; */
+  background-color: rgba(105, 224, 146, 0.05);
+}
+.platformTag.blinkit.active {
+  background-color: rgba(223, 234, 232, 1);
+  border-radius: 10;
+}
+
+.platformTag.zepto.active,
+.platformTag.instamart.active {
+  background-color: white;
+}
+
+.platformTag:not(.active) span {
+  color: rgba(3, 27, 21, 0.7);
+  background-color: white;
 }
 
 .metricsContainer {

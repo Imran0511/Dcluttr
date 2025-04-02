@@ -5,7 +5,7 @@ import styles from "./Dashboard.module.css";
 
 import ProgressRing from "./ProgressRing";
 import SalesChart from "./SalesChart";
-
+import Image from "next/image";
 export default function Dashboard() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [dateRange, setDateRange] = useState("Aug 01, 2024 - Aug 03, 2024");
@@ -173,103 +173,21 @@ export default function Dashboard() {
       <div className={styles.header}>
         <h1>Quick Commerce</h1>
         <div className={styles.headerRight}>
-          <button className={styles.chartButton}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 8V21H3V3H16"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M18 3H21V6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M21 3L12 12"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          <button className={styles.chartButton}></button>
           <div className={styles.dateSelector}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                x="3"
-                y="4"
-                width="18"
-                height="18"
-                rx="2"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <line
-                x1="16"
-                y1="2"
-                x2="16"
-                y2="6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <line
-                x1="8"
-                y1="2"
-                x2="8"
-                y2="6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <line
-                x1="3"
-                y1="10"
-                x2="21"
-                y2="10"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Image
+              src="/icons/CalendarDots.svg"
+              width={18}
+              height={18}
+              alt="Calendar"
+            />
             <span>{dateRange}</span>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6 9L12 15L18 9"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Image
+              src="/icons/ArrowDown.svg"
+              width={16}
+              height={16}
+              alt="Dropdown"
+            />
           </div>
         </div>
       </div>
@@ -281,7 +199,13 @@ export default function Dashboard() {
           }`}
           onClick={() => togglePlatform("blinkit")}
         >
-          Blinkit
+          <Image
+            src="/icons/Blinkit Logo.svg"
+            width={24}
+            height={24}
+            alt="Blinkit Logo"
+          />
+          <span>Blinkit</span>
         </div>
         <div
           className={`${styles.platformTag} ${styles.zepto} ${
@@ -289,7 +213,13 @@ export default function Dashboard() {
           }`}
           onClick={() => togglePlatform("zepto")}
         >
-          Zepto
+          <Image
+            src="/icons/Zepto Logo.svg"
+            width={24}
+            height={24}
+            alt="Zepto Logo"
+          />
+          <span>Zepto</span>
         </div>
         <div
           className={`${styles.platformTag} ${styles.instamart} ${
@@ -297,7 +227,13 @@ export default function Dashboard() {
           }`}
           onClick={() => togglePlatform("instamart")}
         >
-          Instamart
+          <Image
+            src="/icons/instamart.svg"
+            width={24}
+            height={24}
+            alt="Instamart Logo"
+          />
+          <span>Instamart</span>
         </div>
       </div>
 
@@ -306,28 +242,7 @@ export default function Dashboard() {
           <div className={styles.metricHeader}>
             <h3>Sales (MRP)</h3>
             <button className={styles.infoButton}>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M12 16V12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <circle cx="12" cy="8" r="1" fill="currentColor" />
-              </svg>
+              <Image src="/icons/help.svg" width={16} height={16} alt="Info" />
             </button>
           </div>
           <div className={styles.metricValue}>
@@ -356,28 +271,7 @@ export default function Dashboard() {
           <div className={styles.metricHeader}>
             <h3>Total Quantity Sold</h3>
             <button className={styles.infoButton}>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M12 16V12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <circle cx="12" cy="8" r="1" fill="currentColor" />
-              </svg>
+              <Image src="/icons/help.svg" width={16} height={16} alt="Info" />
             </button>
           </div>
           <div className={styles.metricValue}>
@@ -406,28 +300,7 @@ export default function Dashboard() {
           <div className={styles.metricHeader}>
             <h3>Top Cities</h3>
             <button className={styles.infoButton}>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M12 16V12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <circle cx="12" cy="8" r="1" fill="currentColor" />
-              </svg>
+              <Image src="/icons/help.svg" width={16} height={16} alt="Info" />
             </button>
           </div>
           <div className={styles.progressRingContainer}>
@@ -482,21 +355,12 @@ export default function Dashboard() {
           </div>
           <div className={styles.filterButton}>
             <span>Filters(1)</span>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6 9L12 15L18 9"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Image
+              src="/icons/ArrowDown.svg"
+              width={16}
+              height={16}
+              alt="Filter dropdown"
+            />
           </div>
         </div>
 
@@ -508,197 +372,90 @@ export default function Dashboard() {
             ></div>
             <div className={styles.tableHeaderCell} style={{ width: "200px" }}>
               <div className={styles.headerCellContent}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 6H20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 12H20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 18H20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M4 6H5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M4 12H5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M4 18H5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/channels.svg"
+                  width={16}
+                  height={16}
+                  alt="List"
+                />
                 <span>SKU Name</span>
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Sales</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Out of Stock</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Total Inventory</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Average Rank</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Est. Traffic</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Est. Impressions</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>CR</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
           </div>
@@ -784,21 +541,12 @@ export default function Dashboard() {
           </div>
           <div className={styles.filterButton}>
             <span>Filters(1)</span>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6 9L12 15L18 9"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Image
+              src="/icons/ArrowDown.svg"
+              width={16}
+              height={16}
+              alt="Filter dropdown"
+            />
           </div>
         </div>
 
@@ -810,197 +558,90 @@ export default function Dashboard() {
             ></div>
             <div className={styles.tableHeaderCell} style={{ width: "200px" }}>
               <div className={styles.headerCellContent}>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 6H20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 12H20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 18H20"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M4 6H5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M4 12H5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M4 18H5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/channels.svg"
+                  width={16}
+                  height={16}
+                  alt="List"
+                />
                 <span>SKU Name</span>
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Sales</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Out of Stock</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Total Inventory</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Average Rank</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Est. Traffic</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>Est. Impressions</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
             <div className={styles.tableHeaderCell}>
               <div className={styles.headerCellContent}>
                 <span>CR</span>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 9L12 15L18 9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Image
+                  src="/icons/ArrowDown.svg"
+                  width={16}
+                  height={16}
+                  alt="Sort"
+                />
               </div>
             </div>
           </div>
