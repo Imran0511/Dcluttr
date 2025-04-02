@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary-color: #7c3aed;
+  --secondary-color: #f3f4f6;
+  --border-color: #e5e7eb;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --text-gray: #6b7280;
 }
 
 @theme inline {
@@ -22,5 +28,75 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.sidebar {
+  background-color: #fff;
+  border-right: 1px solid var(--border-color);
+  height: 100vh;
+  position: fixed;
+  width: 220px;
+}
+
+.main-content {
+  margin-left: 220px;
+  padding: 20px;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.tag {
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-blinkit {
+  background-color: #f0f4c3;
+  color: #827717;
+}
+
+.tag-instamart {
+  background-color: #ffccbc;
+  color: #bf360c;
+}
+
+.tag-zepto {
+  background-color: #d1c4e9;
+  color: #4527a0;
+}
+
+.chart-container {
+  height: 150px;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
 }

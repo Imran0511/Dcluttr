@@ -1,0 +1,141 @@
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background-color: white;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.brandContainer {
+  display: flex;
+  align-items: center;
+  padding: 16px 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brandLogo {
+  margin-right: 8px;
+}
+
+.logoCircle {
+  width: 30px;
+  height: 30px;
+  background-color: #f97316;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.brandSelector {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+
+.brandName {
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.dropdownIcon {
+  color: #6b7280;
+}
+
+.backButton {
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.navigation {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  color: var(--foreground);
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.navItem svg {
+  margin-right: 12px;
+  color: #6b7280;
+}
+
+.navItem:hover {
+  background-color: #f3f4f6;
+}
+
+.navGroup {
+  margin-bottom: 4px;
+}
+
+.chevron {
+  margin-left: auto !important;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.subMenu {
+  padding-left: 32px;
+  margin-bottom: 8px;
+}
+
+.subItem {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--foreground);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.subItem:hover {
+  background-color: #f3f4f6;
+}
+
+.subItem.active {
+  background-color: #f3f4f6;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.bottomNav {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.avatarContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
