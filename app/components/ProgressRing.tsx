@@ -7,17 +7,17 @@ export default function ProgressRing() {
   const circumference = 2 * Math.PI * radius;
 
   const colorSegments = [
-    { percent: 35, color: "#5c6ac4" }, // New Delhi
-    { percent: 23, color: "#e05252" }, // Mumbai
-    { percent: 21, color: "#ffc107" }, // West Bengal
-    { percent: 9, color: "#777777" }, // Others
+    { percent: 35, color: "#4E56C8" }, // New Delhi - blue
+    { percent: 23, color: "#E05252" }, // Mumbai - red
+    { percent: 21, color: "#EFBF31" }, // West Bengal - yellow
+    { percent: 9, color: "#8D8D8D" }, // Others - gray
   ];
 
   // Calculate stroke-dasharray for each segment
   let startPercentage = 0;
   const segments = colorSegments.map((segment) => {
     const segmentLength = (segment.percent / 100) * circumference;
-    const gap = 0.5; // Small gap between segments
+    const gap = 2; // Small gap between segments
     const dashArray = `${segmentLength - gap} ${
       circumference - segmentLength + gap
     }`;
@@ -40,8 +40,8 @@ export default function ProgressRing() {
         cy="70"
         r="65"
         fill="none"
-        stroke="#f3f4f6"
-        strokeWidth="10"
+        stroke="#E6E7E9"
+        strokeWidth="12"
       />
 
       {/* Colored segments */}
@@ -53,7 +53,7 @@ export default function ProgressRing() {
           r={radius}
           fill="none"
           stroke={segment.color}
-          strokeWidth="10"
+          strokeWidth="16"
           strokeDasharray={segment.dashArray}
           strokeDashoffset={segment.dashOffset}
           strokeLinecap="round"

@@ -43,6 +43,20 @@ export default function Dashboard() {
     },
     {
       id: 3,
+      selected: true,
+      name: "Choco Bar 100g",
+      sales: "₹7,012.72",
+      salesPercentage: 2.4,
+      outOfStock: "3.28%",
+      totalInventory: "328",
+      avgRank: "4",
+      estTraffic: "2960",
+      estImpressions: "3657",
+      cr: "4.8%",
+      growthNegative: true,
+    },
+    {
+      id: 4,
       selected: false,
       name: "SKU 3",
       sales: "₹9313",
@@ -55,7 +69,7 @@ export default function Dashboard() {
       cr: "1.8%",
     },
     {
-      id: 4,
+      id: 5,
       selected: false,
       name: "SKU 4",
       sales: "₹0",
@@ -88,13 +102,14 @@ export default function Dashboard() {
       selected: true,
       name: "Bengaluru",
       sales: "₹8,526.32",
-      salesPercentage: 3.28,
+      salesPercentage: 2.4,
       outOfStock: "6.79%",
       totalInventory: "679",
       avgRank: "7",
       estTraffic: "3005",
       estImpressions: "4231",
       cr: "2.3%",
+      growthNegative: true,
     },
     {
       id: 3,
@@ -125,10 +140,34 @@ export default function Dashboard() {
   ]);
 
   const cityMetrics = [
-    { city: "New Delhi", amount: "₹26.5L", percentage: 35, growth: 1.2 },
-    { city: "Mumbai", amount: "₹16.4L", percentage: 23, growth: 3.3 },
-    { city: "West Bengal", amount: "₹12.2L", percentage: 21, growth: 2.3 },
-    { city: "Others", amount: "₹24.3L", percentage: 9, growth: 1.09 },
+    {
+      city: "New Delhi",
+      amount: "₹26.5L",
+      percentage: 35,
+      growth: 1.2,
+      positive: true,
+    },
+    {
+      city: "Mumbai",
+      amount: "₹36.4L",
+      percentage: 23,
+      growth: 3.3,
+      positive: false,
+    },
+    {
+      city: "West Bengal",
+      amount: "₹12.2L",
+      percentage: 21,
+      growth: 2.3,
+      positive: false,
+    },
+    {
+      city: "Others",
+      amount: "₹24.3L",
+      percentage: 9,
+      growth: 1.09,
+      positive: true,
+    },
   ];
 
   const togglePlatform = (platform: string) => {
@@ -165,7 +204,7 @@ export default function Dashboard() {
   const soldGrowth = 2.4;
   const lastMonthSold = "119.69";
 
-  const totalRevenue = "68.2L";
+  const totalRevenue = "₹68.2L";
   const revenueGrowth = 2.2;
 
   return (
@@ -249,21 +288,16 @@ export default function Dashboard() {
             {totalSales}
             <span
               className={styles.growthIndicator}
-              style={{
-                color:
-                  salesGrowth > 0
-                    ? "var(--success-color)"
-                    : "var(--danger-color)",
-              }}
+              style={{ color: "var(--success-color)" }}
             >
-              {salesGrowth > 0 ? "↑" : "↓"} {Math.abs(salesGrowth)}%
+              ↑ {salesGrowth}%
             </span>
           </div>
           <div className={styles.metricSubtext}>
             vs {lastMonthSales} last month
           </div>
           <div className={styles.chartWrapper}>
-            <SalesChart />
+            <SalesChart type="sales" />
           </div>
         </div>
 
@@ -278,21 +312,16 @@ export default function Dashboard() {
             {totalSold}
             <span
               className={styles.growthIndicator}
-              style={{
-                color:
-                  soldGrowth > 0
-                    ? "var(--success-color)"
-                    : "var(--danger-color)",
-              }}
+              style={{ color: "var(--success-color)" }}
             >
-              {soldGrowth > 0 ? "↑" : "↓"} {Math.abs(soldGrowth)}%
+              ↑ {soldGrowth}%
             </span>
           </div>
           <div className={styles.metricSubtext}>
             vs {lastMonthSold} last month
           </div>
           <div className={styles.chartWrapper}>
-            <SalesChart />
+            <SalesChart type="quantity" />
           </div>
         </div>
 
@@ -332,13 +361,12 @@ export default function Dashboard() {
                   <div
                     className={styles.cityGrowth}
                     style={{
-                      color:
-                        city.growth > 0
-                          ? "var(--success-color)"
-                          : "var(--danger-color)",
+                      color: city.positive
+                        ? "var(--success-color)"
+                        : "var(--danger-color)",
                     }}
                   >
-                    {city.growth > 0 ? "↑" : "↓"} {city.growth}%
+                    {city.positive ? "↑" : "↓"} {city.growth}%
                   </div>
                 </div>
               ))}
@@ -356,113 +384,115 @@ export default function Dashboard() {
           <div className={styles.filterButton}>
             <span>Filters(1)</span>
             <Image
-              src="/icons/ArrowDown.svg"
-              width={16}
-              height={16}
+              src="/icons/arrow_down_white.svg"
+              width={12}
+              height={10}
               alt="Filter dropdown"
             />
           </div>
         </div>
 
         <div className={styles.dataTable}>
-          <div className={styles.tableHeader}>
-            <div
-              className={styles.tableHeaderCell}
-              style={{ width: "40px" }}
-            ></div>
-            <div className={styles.tableHeaderCell} style={{ width: "200px" }}>
-              <div className={styles.headerCellContent}>
-                <Image
-                  src="/icons/channels.svg"
-                  width={16}
-                  height={16}
-                  alt="List"
-                />
-                <span>SKU Name</span>
+          <div className={styles.mainheader}>
+            <div className={styles.categoryHeaders}>
+              <div className={styles.nameColumn}>
+                <div className={styles.headerCellContent}>
+                  <Image
+                    src="/icons/ChartLine.svg"
+                    width={20}
+                    height={20}
+                    alt="Sort"
+                  />
+                  <span>SKU Name</span>
+                </div>
               </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Sales</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
+              <div className={styles.availabilityCategory}>
+                <p className={styles.availabilityCategoryHeading}>
+                  Availability
+                </p>
+                <div className={styles.items1}>
+                  <div className={styles.headerCellContent}>
+                    <span>Sales</span>
+                    <Image
+                      src="/icons/arrow_down.svg"
+                      width={12}
+                      height={10}
+                      alt="Sort"
+                    />
+                  </div>
+
+                  <div className={styles.headerCellContent}>
+                    <span>Out of Stock</span>
+                    <Image
+                      src="/icons/arrow_down.svg"
+                      width={12}
+                      height={10}
+                      alt="Sort"
+                    />
+                  </div>
+
+                  <div className={styles.headerCellContent}>
+                    <span>Total Inventory</span>
+                    <Image
+                      src="/icons/arrow_down.svg"
+                      width={12}
+                      height={10}
+                      alt="Sort"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Out of Stock</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Total Inventory</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Average Rank</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Est. Traffic</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Est. Impressions</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>CR</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
+              <div className={styles.visibilityCategory}>
+                <p className={styles.availabilityCategoryHeading}>Visibility</p>
+                <div className={styles.items1}>
+                  <div className={styles.headerCellContent}>
+                    <span>Average Rank</span>
+                    <Image
+                      src="/icons/arrow_down.svg"
+                      width={12}
+                      height={10}
+                      alt="Sort"
+                    />
+                  </div>
+                  <div className={styles.headerCellContent}>
+                    <span>Est. Traffic</span>
+                    <Image
+                      src="/icons/arrow_down.svg"
+                      width={12}
+                      height={10}
+                      alt="Sort"
+                    />
+                  </div>
+                  <div className={styles.headerCellContent}>
+                    <span>Est. Impressions</span>
+                    <Image
+                      src="/icons/arrow_down.svg"
+                      width={12}
+                      height={10}
+                      alt="Sort"
+                    />
+                  </div>
+                  <div className={styles.headerCellContent}>
+                    <span>CR</span>
+                    <Image
+                      src="/icons/arrow_down.svg"
+                      width={12}
+                      height={10}
+                      alt="Sort"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
           <div className={styles.tableBody}>
             {skuData.map((item) => (
-              <div key={item.id} className={styles.tableRow}>
+              <div
+                key={item.id}
+                className={`${styles.tableRow} ${
+                  item.selected ? styles.selected : ""
+                }`}
+              >
                 <div className={styles.tableCell} style={{ width: "40px" }}>
                   <input
                     type="checkbox"
@@ -470,64 +500,98 @@ export default function Dashboard() {
                     onChange={() => toggleSKUSelection(item.id)}
                   />
                 </div>
-                <div className={styles.tableCell} style={{ width: "200px" }}>
+                <div className={styles.tableCell} style={{ width: "180px" }}>
                   {item.name}
                 </div>
-                <div className={styles.tableCell}>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
                   <div>{item.sales}</div>
                   {item.salesPercentage > 0 && (
                     <div
                       className={styles.growthCell}
-                      style={{ color: "var(--success-color)" }}
+                      style={{
+                        color: item.growthNegative
+                          ? "var(--danger-color)"
+                          : "var(--success-color)",
+                      }}
                     >
-                      ↑ {item.salesPercentage}%
+                      {item.growthNegative ? "↓" : "↑"} {item.salesPercentage}%
                     </div>
                   )}
                 </div>
-                <div className={styles.tableCell}>{item.outOfStock}</div>
-                <div className={styles.tableCell}>{item.totalInventory}</div>
-                <div className={styles.tableCell}>{item.avgRank}</div>
-                <div className={styles.tableCell}>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
+                  {item.outOfStock}
+                </div>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
+                  {item.totalInventory}
+                </div>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
+                  {item.avgRank}
+                </div>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
                   <div>{item.estTraffic}</div>
                   {item.salesPercentage > 0 && (
                     <div
                       className={styles.growthCell}
-                      style={{ color: "var(--success-color)" }}
+                      style={{
+                        color: item.growthNegative
+                          ? "var(--danger-color)"
+                          : "var(--success-color)",
+                      }}
                     >
-                      ↑ {item.salesPercentage}%
+                      {item.growthNegative ? "↓" : "↑"} {item.salesPercentage}%
                     </div>
                   )}
                 </div>
-                <div className={styles.tableCell}>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
                   <div>{item.estImpressions}</div>
                   {item.salesPercentage > 0 && (
                     <div
                       className={styles.growthCell}
-                      style={{ color: "var(--success-color)" }}
+                      style={{
+                        color: item.growthNegative
+                          ? "var(--danger-color)"
+                          : "var(--success-color)",
+                      }}
                     >
-                      ↑ {item.salesPercentage}%
+                      {item.growthNegative ? "↓" : "↑"} {item.salesPercentage}%
                     </div>
                   )}
                 </div>
-                <div className={styles.tableCell}>{item.cr}</div>
+                <div className={styles.tableCell} style={{ width: "100px" }}>
+                  {item.cr}
+                </div>
               </div>
             ))}
 
-            <div className={styles.tableFooter}>
+            <div className={styles.totalRow}>
               <div className={styles.tableCell} style={{ width: "40px" }}></div>
               <div
                 className={styles.tableCell}
-                style={{ width: "200px", fontWeight: "bold" }}
+                style={{ width: "180px", fontWeight: "600" }}
               >
                 Total
               </div>
-              <div className={styles.tableCell}>₹2,93,132.12</div>
-              <div className={styles.tableCell}>16%</div>
-              <div className={styles.tableCell}>2931</div>
-              <div className={styles.tableCell}>8.3</div>
-              <div className={styles.tableCell}>61,985</div>
-              <div className={styles.tableCell}>2,61,768</div>
-              <div className={styles.tableCell}>1.9%</div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                ₹2,93,132.12
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                16%
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                2931
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                8.3
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                61,985
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                2,61,768
+              </div>
+              <div className={styles.tableCell} style={{ width: "100px" }}>
+                1.9%
+              </div>
             </div>
           </div>
         </div>
@@ -542,113 +606,106 @@ export default function Dashboard() {
           <div className={styles.filterButton}>
             <span>Filters(1)</span>
             <Image
-              src="/icons/ArrowDown.svg"
-              width={16}
-              height={16}
+              src="/icons/arrow_down_white.svg"
+              width={12}
+              height={10}
               alt="Filter dropdown"
             />
           </div>
         </div>
 
         <div className={styles.dataTable}>
-          <div className={styles.tableHeader}>
-            <div
-              className={styles.tableHeaderCell}
-              style={{ width: "40px" }}
-            ></div>
-            <div className={styles.tableHeaderCell} style={{ width: "200px" }}>
+          <div className={styles.categoryHeaders}>
+            <div className={styles.nameColumn}>
               <div className={styles.headerCellContent}>
-                <Image
-                  src="/icons/channels.svg"
-                  width={16}
-                  height={16}
-                  alt="List"
-                />
-                <span>SKU Name</span>
+                <span>City Name</span>
               </div>
             </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Sales</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
+            <div className={styles.availabilityCategory}>
+              <p className={styles.availabilityCategoryHeading}>Availability</p>
+              <div className={styles.items1}>
+                <div className={styles.headerCellContent}>
+                  <span>Sales</span>
+                  <Image
+                    src="/icons/arrow_down.svg"
+                    width={12}
+                    height={10}
+                    alt="Sort"
+                  />
+                </div>
+
+                <div className={styles.headerCellContent}>
+                  <span>Out of Stock</span>
+                  <Image
+                    src="/icons/arrow_down.svg"
+                    width={12}
+                    height={10}
+                    alt="Sort"
+                  />
+                </div>
+
+                <div className={styles.headerCellContent}>
+                  <span>Total Inventory</span>
+                  <Image
+                    src="/icons/arrow_down.svg"
+                    width={12}
+                    height={10}
+                    alt="Sort"
+                  />
+                </div>
               </div>
             </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Out of Stock</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Total Inventory</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Average Rank</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Est. Traffic</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>Est. Impressions</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
-              </div>
-            </div>
-            <div className={styles.tableHeaderCell}>
-              <div className={styles.headerCellContent}>
-                <span>CR</span>
-                <Image
-                  src="/icons/ArrowDown.svg"
-                  width={16}
-                  height={16}
-                  alt="Sort"
-                />
+            <div className={styles.visibilityCategory}>
+              <p className={styles.availabilityCategoryHeading}>Visibility</p>
+              <div className={styles.items1}>
+                <div className={styles.headerCellContent}>
+                  <span>Average Rank</span>
+                  <Image
+                    src="/icons/arrow_down.svg"
+                    width={12}
+                    height={10}
+                    alt="Sort"
+                  />
+                </div>
+                <div className={styles.headerCellContent}>
+                  <span>Est. Traffic</span>
+                  <Image
+                    src="/icons/arrow_down.svg"
+                    width={12}
+                    height={10}
+                    alt="Sort"
+                  />
+                </div>
+                <div className={styles.headerCellContent}>
+                  <span>Est. Impressions</span>
+                  <Image
+                    src="/icons/arrow_down.svg"
+                    width={12}
+                    height={10}
+                    alt="Sort"
+                  />
+                </div>
+                <div className={styles.headerCellContent}>
+                  <span>CR</span>
+                  <Image
+                    src="/icons/arrow_down.svg"
+                    width={12}
+                    height={10}
+                    alt="Sort"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           <div className={styles.tableBody}>
             {cityData.map((item) => (
-              <div key={item.id} className={styles.tableRow}>
+              <div
+                key={item.id}
+                className={`${styles.tableRow} ${
+                  item.selected ? styles.selected : ""
+                }`}
+              >
                 <div className={styles.tableCell} style={{ width: "40px" }}>
                   <input
                     type="checkbox"
@@ -656,64 +713,98 @@ export default function Dashboard() {
                     onChange={() => toggleCitySelection(item.id)}
                   />
                 </div>
-                <div className={styles.tableCell} style={{ width: "200px" }}>
+                <div className={styles.tableCell} style={{ width: "180px" }}>
                   {item.name}
                 </div>
-                <div className={styles.tableCell}>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
                   <div>{item.sales}</div>
                   {item.salesPercentage > 0 && (
                     <div
                       className={styles.growthCell}
-                      style={{ color: "var(--success-color)" }}
+                      style={{
+                        color: item.growthNegative
+                          ? "var(--danger-color)"
+                          : "var(--success-color)",
+                      }}
                     >
-                      ↑ {item.salesPercentage}%
+                      {item.growthNegative ? "↓" : "↑"} {item.salesPercentage}%
                     </div>
                   )}
                 </div>
-                <div className={styles.tableCell}>{item.outOfStock}</div>
-                <div className={styles.tableCell}>{item.totalInventory}</div>
-                <div className={styles.tableCell}>{item.avgRank}</div>
-                <div className={styles.tableCell}>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
+                  {item.outOfStock}
+                </div>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
+                  {item.totalInventory}
+                </div>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
+                  {item.avgRank}
+                </div>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
                   <div>{item.estTraffic}</div>
                   {item.salesPercentage > 0 && (
                     <div
                       className={styles.growthCell}
-                      style={{ color: "var(--success-color)" }}
+                      style={{
+                        color: item.growthNegative
+                          ? "var(--danger-color)"
+                          : "var(--success-color)",
+                      }}
                     >
-                      ↑ {item.salesPercentage}%
+                      {item.growthNegative ? "↓" : "↑"} {item.salesPercentage}%
                     </div>
                   )}
                 </div>
-                <div className={styles.tableCell}>
+                <div className={styles.tableCell} style={{ width: "120px" }}>
                   <div>{item.estImpressions}</div>
                   {item.salesPercentage > 0 && (
                     <div
                       className={styles.growthCell}
-                      style={{ color: "var(--success-color)" }}
+                      style={{
+                        color: item.growthNegative
+                          ? "var(--danger-color)"
+                          : "var(--success-color)",
+                      }}
                     >
-                      ↑ {item.salesPercentage}%
+                      {item.growthNegative ? "↓" : "↑"} {item.salesPercentage}%
                     </div>
                   )}
                 </div>
-                <div className={styles.tableCell}>{item.cr}</div>
+                <div className={styles.tableCell} style={{ width: "100px" }}>
+                  {item.cr}
+                </div>
               </div>
             ))}
 
-            <div className={styles.tableFooter}>
+            <div className={styles.totalRow}>
               <div className={styles.tableCell} style={{ width: "40px" }}></div>
               <div
                 className={styles.tableCell}
-                style={{ width: "200px", fontWeight: "bold" }}
+                style={{ width: "180px", fontWeight: "600" }}
               >
                 Total
               </div>
-              <div className={styles.tableCell}>₹2,93,132.12</div>
-              <div className={styles.tableCell}>16%</div>
-              <div className={styles.tableCell}>2931</div>
-              <div className={styles.tableCell}>8.3</div>
-              <div className={styles.tableCell}>61,985</div>
-              <div className={styles.tableCell}>2,61,768</div>
-              <div className={styles.tableCell}>1.9%</div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                ₹2,93,132.12
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                16%
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                2931
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                8.3
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                61,985
+              </div>
+              <div className={styles.tableCell} style={{ width: "120px" }}>
+                2,61,768
+              </div>
+              <div className={styles.tableCell} style={{ width: "100px" }}>
+                1.9%
+              </div>
             </div>
           </div>
         </div>
@@ -723,6 +814,6 @@ export default function Dashboard() {
 }
 
 function getCityColor(index: number) {
-  const colors = ["#5c6ac4", "#e05252", "#ffc107", "#777777"];
+  const colors = ["#4E56C8", "#E05252", "#EFBF31", "#8D8D8D"];
   return colors[index % colors.length];
 }
