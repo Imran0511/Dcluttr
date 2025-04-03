@@ -1,211 +1,63 @@
 "use client";
 
-import { useState } from "react";
 import styles from "./Dashboard.module.css";
-
 import ProgressRing from "./ProgressRing";
 import SalesChart from "./SalesChart";
 import Image from "next/image";
+import { useDashboardData } from "../hooks/useDashboardData";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { SkuItem, CityItem, CityMetric } from "../types/dashboardTypes";
+
 export default function Dashboard() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [dateRange, setDateRange] = useState("Aug 01, 2024 - Aug 03, 2024");
-  const [selectedPlatforms, setSelectedPlatforms] = useState([
-    "blinkit",
-    "zepto",
-    "instamart",
-  ]);
-  const [skuData, setSkuData] = useState([
-    {
-      id: 1,
-      selected: true,
-      name: "Protein Bar 100g",
-      sales: "₹93,132.12",
-      salesPercentage: 2.4,
-      outOfStock: "1.68%",
-      totalInventory: "931.9",
-      avgRank: "3.2",
-      estTraffic: "12,303",
-      estImpressions: "25,005",
-      cr: "1.8%",
-    },
-    {
-      id: 2,
-      selected: true,
-      name: "Choco Bar 100g",
-      sales: "₹8,526.32",
-      salesPercentage: 6.79,
-      outOfStock: "6.79%",
-      totalInventory: "679",
-      avgRank: "7",
-      estTraffic: "3005",
-      estImpressions: "4231",
-      cr: "2.3%",
-    },
-    {
-      id: 3,
-      selected: true,
-      name: "Choco Bar 100g",
-      sales: "₹7,012.72",
-      salesPercentage: 2.4,
-      outOfStock: "3.28%",
-      totalInventory: "328",
-      avgRank: "4",
-      estTraffic: "2960",
-      estImpressions: "3657",
-      cr: "4.8%",
-      growthNegative: true,
-    },
-    {
-      id: 4,
-      selected: false,
-      name: "SKU 3",
-      sales: "₹9313",
-      salesPercentage: 1.68,
-      outOfStock: "1.68%",
-      totalInventory: "931.9",
-      avgRank: "11",
-      estTraffic: "1931.9",
-      estImpressions: "₹931.9",
-      cr: "1.8%",
-    },
-    {
-      id: 5,
-      selected: false,
-      name: "SKU 4",
-      sales: "₹0",
-      salesPercentage: 0,
-      outOfStock: "0",
-      totalInventory: "0",
-      avgRank: "0",
-      estTraffic: "₹0",
-      estImpressions: "₹0",
-      cr: "0.0%",
-    },
-  ]);
+  const {
+    dateRange,
+    selectedPlatforms,
+    togglePlatform,
+    skuData: initialSkuData,
+    cityData: initialCityData,
+    cityMetrics,
+    salesData,
+    itemsSoldData,
+    revenueData,
+    loading,
+  } = useDashboardData();
 
-  const [cityData, setCityData] = useState([
-    {
-      id: 1,
-      selected: true,
-      name: "Delhi",
-      sales: "₹93,132.12",
-      salesPercentage: 1.68,
-      outOfStock: "1.68%",
-      totalInventory: "931.9",
-      avgRank: "3.2",
-      estTraffic: "12,303",
-      estImpressions: "25,005",
-      cr: "1.8%",
-    },
-    {
-      id: 2,
-      selected: true,
-      name: "Bengaluru",
-      sales: "₹8,526.32",
-      salesPercentage: 2.4,
-      outOfStock: "6.79%",
-      totalInventory: "679",
-      avgRank: "7",
-      estTraffic: "3005",
-      estImpressions: "4231",
-      cr: "2.3%",
-      growthNegative: true,
-    },
-    {
-      id: 3,
-      selected: false,
-      name: "SKU 3",
-      sales: "₹9313",
-      salesPercentage: 1.68,
-      outOfStock: "1.68%",
-      totalInventory: "931.9",
-      avgRank: "11",
-      estTraffic: "1931.9",
-      estImpressions: "₹931.9",
-      cr: "1.8%",
-    },
-    {
-      id: 4,
-      selected: false,
-      name: "SKU 4",
-      sales: "₹0",
-      salesPercentage: 0,
-      outOfStock: "0",
-      totalInventory: "0",
-      avgRank: "0",
-      estTraffic: "₹0",
-      estImpressions: "₹0",
-      cr: "0.0%",
-    },
-  ]);
+  // Local state to handle user interactions
+  const [skuData, setSkuData] = useState<SkuItem[]>([]);
+  const [cityData, setCityData] = useState<CityItem[]>([]);
 
-  const cityMetrics = [
-    {
-      city: "New Delhi",
-      amount: "₹26.5L",
-      percentage: 35,
-      growth: 1.2,
-      positive: true,
-    },
-    {
-      city: "Mumbai",
-      amount: "₹36.4L",
-      percentage: 23,
-      growth: 3.3,
-      positive: false,
-    },
-    {
-      city: "West Bengal",
-      amount: "₹12.2L",
-      percentage: 21,
-      growth: 2.3,
-      positive: false,
-    },
-    {
-      city: "Others",
-      amount: "₹24.3L",
-      percentage: 9,
-      growth: 1.09,
-      positive: true,
-    },
-  ];
+  // Update local state when API data changes - use a ref to prevent infinite updates
+  const initialLoadRef = useRef(false);
 
-  const togglePlatform = (platform: string) => {
-    if (selectedPlatforms.includes(platform)) {
-      if (selectedPlatforms.length > 1) {
-        setSelectedPlatforms(selectedPlatforms.filter((p) => p !== platform));
-      }
-    } else {
-      setSelectedPlatforms([...selectedPlatforms, platform]);
+  useEffect(() => {
+    if (!loading && !initialLoadRef.current) {
+      setSkuData(initialSkuData);
+      setCityData(initialCityData);
+      initialLoadRef.current = true;
     }
-  };
+  }, [loading, initialSkuData, initialCityData]);
 
-  const toggleSKUSelection = (id: number) => {
-    setSkuData(
-      skuData.map((item) =>
+  // Create stable toggle functions
+  const toggleSKUSelection = useCallback((id: number) => {
+    setSkuData((prevData) =>
+      prevData.map((item) =>
         item.id === id ? { ...item, selected: !item.selected } : item
       )
     );
-  };
+  }, []);
 
-  const toggleCitySelection = (id: number) => {
-    setCityData(
-      cityData.map((item) =>
+  const toggleCitySelection = useCallback((id: number) => {
+    setCityData((prevData) =>
+      prevData.map((item) =>
         item.id === id ? { ...item, selected: !item.selected } : item
       )
     );
-  };
+  }, []);
 
-  const totalSales = "125.49";
-  const salesGrowth = 2.4;
-  const lastMonthSales = "119.69";
-
-  const totalSold = "125.49";
-  const soldGrowth = 2.4;
-  const lastMonthSold = "119.69";
-
-  const totalRevenue = "₹68.2L";
-  const revenueGrowth = 2.2;
+  // Extract values from API data
+  const { totalSales, salesGrowth, lastMonthSales } = salesData;
+  const { totalSold, soldGrowth, lastMonthSold } = itemsSoldData;
+  const { totalRevenue, revenueGrowth } = revenueData;
 
   return (
     <div className={styles.dashboardContainer}>
@@ -218,13 +70,13 @@ export default function Dashboard() {
                 src="/icons/ChartLine.svg"
                 width={20}
                 height={20}
-                alt="Calendar"
+                alt="Chart"
               />
               <Image
                 src="/icons/bi_toggle-on.svg"
                 width={20}
                 height={20}
-                alt="Calendar"
+                alt="Toggle"
               />
             </button>
             <div className={styles.dateSelector}>
@@ -386,7 +238,7 @@ export default function Dashboard() {
               </div>
               <div className={styles.metricBody}>
                 <div className={styles.cityMetrics}>
-                  {cityMetrics.map((city, index) => (
+                  {cityMetrics.map((city: CityMetric, index: number) => (
                     <div key={index} className={styles.cityMetricItem}>
                       <div
                         className={styles.cityDot}
