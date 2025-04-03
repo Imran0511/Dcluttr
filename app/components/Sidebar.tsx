@@ -14,34 +14,40 @@ export default function Sidebar() {
     <div className={styles.mainContainer}>
       {/* Left column with logos */}
       <div className={styles.brandLogosContainer}>
-        <div className={styles.mainLogo}>
-          <Image
-            src="/icons/perfora.svg"
-            width={40}
-            height={40}
-            alt="Perfora"
-          />
+        <div>
+          <div className={styles.mainLogo}>
+            <Image
+              src="/icons/perfora.svg"
+              width={40}
+              height={40}
+              alt="Perfora"
+            />
+          </div>
+          <div className={styles.otherLogos}>
+            <div className={styles.logoItem}>
+              <Image
+                src="/icons/mama_earth.svg"
+                width={35}
+                height={35}
+                alt="Mama Earth"
+              />
+            </div>
+            <div className={styles.logoItem}>
+              <Image
+                src="/icons/Zepto Logo.svg"
+                width={35}
+                height={35}
+                alt="Zepto"
+              />
+            </div>
+            <div className={styles.addLogoButton}>
+              <span>+</span>
+            </div>
+          </div>
         </div>
-        <div className={styles.otherLogos}>
-          <div className={styles.logoItem}>
-            <Image
-              src="/icons/mama_earth.svg"
-              width={35}
-              height={35}
-              alt="Mama Earth"
-            />
-          </div>
-          <div className={styles.logoItem}>
-            <Image
-              src="/icons/Zepto Logo.svg"
-              width={35}
-              height={35}
-              alt="Zepto"
-            />
-          </div>
-          <div className={styles.addLogoButton}>
-            <span>+</span>
-          </div>
+        <div className={styles.bottomLogos}>
+          <Image src="/icons/users.svg" width={35} height={35} alt="Zepto" />
+          <Image src="/icons/ss2.svg" width={35} height={35} alt="Zepto" />
         </div>
       </div>
 
@@ -49,9 +55,7 @@ export default function Sidebar() {
       <div className={styles.sidebar}>
         <div className={styles.brandContainer}>
           <div className={styles.brandSelector}>
-            <div className={styles.userAvatar}>
-              <span>SS</span>
-            </div>
+            <Image src="/icons/ss.svg" width={24} height={24} alt="caret" />
             <div className={styles.brandName}>Test_brand</div>
             <div className={styles.caretContainer}>
               <Image

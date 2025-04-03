@@ -213,7 +213,20 @@ export default function Dashboard() {
         <div className={styles.header}>
           <h1>Quick Commerce</h1>
           <div className={styles.headerRight}>
-            <button className={styles.chartButton}></button>
+            <button className={styles.chartButton}>
+              <Image
+                src="/icons/ChartLine.svg"
+                width={20}
+                height={20}
+                alt="Calendar"
+              />
+              <Image
+                src="/icons/bi_toggle-on.svg"
+                width={20}
+                height={20}
+                alt="Calendar"
+              />
+            </button>
             <div className={styles.dateSelector}>
               <Image
                 src="/icons/CalendarDots.svg"
@@ -223,9 +236,9 @@ export default function Dashboard() {
               />
               <span>{dateRange}</span>
               <Image
-                src="/icons/ArrowDown.svg"
-                width={16}
-                height={16}
+                src="/icons/arrow_down.svg"
+                width={12}
+                height={10}
                 alt="Dropdown"
               />
             </div>

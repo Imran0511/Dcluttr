@@ -39,11 +39,13 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
         ? [1.8, 2.0, 2.5, 3.8, 3.5, 2.5, 3.0]
         : [2.2, 2.0, 2.2, 3.2, 3.5, 3.8, 3.2];
 
+    // Add padding for the chart area
     const width = rect.width;
     const height = rect.height;
+    // Use smaller bottom padding to leave room for legends
     const padding = { top: 10, right: 10, bottom: 30, left: 30 };
     const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
+    const chartHeight = height - padding.top - padding.bottom - 20; // Reserve 20px for legends
 
     // Draw grid lines and labels
     ctx.strokeStyle = "#e5e7eb";
@@ -79,13 +81,25 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
     const xStep = chartWidth / (xLabels.length - 1);
 
     xLabels.forEach((label, i) => {
-      const x = padding.left + i * xStep;
-      ctx.fillText(label, x, height - padding.bottom + 15);
+      const x = padding.left + i * xStep + 25; // Adding 25px offset to the right
+      // Position x-axis labels at the bottom of the chart area
+      ctx.fillText(label, x, padding.top + chartHeight + 25);
     });
+
+    // Draw a red horizontal line to separate x-axis from legends
+    ctx.beginPath();
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 1;
+    ctx.moveTo(padding.left, padding.top + chartHeight + 35);
+    ctx.lineTo(width - padding.right, padding.top + chartHeight + 35);
+    ctx.stroke();
+
+    // Reset stroke style for other elements
+    ctx.strokeStyle = "#e5e7eb";
 
     // Function to convert data point to coordinates
     const toCoords = (value: number, index: number, data: number[]) => ({
-      x: padding.left + (index * chartWidth) / (data.length - 1),
+      x: padding.left + (index * chartWidth) / (data.length - 1) + 25, // Adding same 25px offset
       y:
         padding.top +
         chartHeight -
@@ -118,12 +132,12 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
 
     // Fill area under the line
     ctx.beginPath();
-    ctx.moveTo(padding.left, height - padding.bottom);
+    ctx.moveTo(padding.left + 25, padding.top + chartHeight); // Add 25px offset
     thisPeriodData.forEach((value, i) => {
       const { x, y } = toCoords(value, i, thisPeriodData);
       ctx.lineTo(x, y);
     });
-    ctx.lineTo(width - padding.right, height - padding.bottom);
+    ctx.lineTo(width - padding.right + 25, padding.top + chartHeight); // Add 25px offset
     ctx.closePath();
     ctx.fillStyle = fillColor;
     ctx.fill();
@@ -142,29 +156,30 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Add legend
-    const legendY = height - 10;
-    const legendSpacing = 100;
+    // Add legend in the extra space we reserved below the chart
+    const legendY = height - 5; // Position near the bottom of the canvas
+    const legendSpacing = 120;
+    const legendStartX = padding.left + 30; // Adjusted to align with shifted chart elements
 
     // This month legend
     ctx.fillStyle = primaryColor;
     ctx.beginPath();
-    ctx.arc(padding.left, legendY, 4, 0, Math.PI * 2);
+    ctx.arc(legendStartX, legendY, 4, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = "#374151";
     ctx.font = "12px Inter, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("This Month", padding.left + 10, legendY + 4);
+    ctx.fillText("This Month", legendStartX + 10, legendY + 4);
 
     // Last month legend
     ctx.fillStyle = secondaryColor;
     ctx.beginPath();
-    ctx.arc(padding.left + legendSpacing, legendY, 4, 0, Math.PI * 2);
+    ctx.arc(legendStartX + legendSpacing, legendY, 4, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = "#374151";
-    ctx.fillText("Last Month", padding.left + legendSpacing + 10, legendY + 4);
+    ctx.fillText("Last Month", legendStartX + legendSpacing + 10, legendY + 4);
   }, [type]);
 
   return (
