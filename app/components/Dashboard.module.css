@@ -6,6 +6,24 @@
   --text-gray: #6b7280;
   --text-dark: #111827;
   --filter-button-color: #036e29;
+  --header-height: 60px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+}
+
+html {
+  background-color: var(--bg-color);
+}
+
+.dashboardContainer {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-color);
 }
 
 .dashboard {
@@ -14,6 +32,10 @@
   border-color: var(--border-color);
   border-radius: 10px 10px 0px 0px;
   background-color: var(--bg-color);
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  position: relative;
+  min-width: 100%;
 }
 
 .header {
@@ -23,6 +45,10 @@
   margin-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
   background-color: #ffffff;
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .header h1 {
@@ -75,6 +101,9 @@
   background-color: white;
   width: 380px;
   margin-left: 20px;
+  position: sticky;
+  top: var(--header-height);
+  z-index: 9;
 }
 
 .platformTag {
@@ -139,7 +168,7 @@
   background-color: white;
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  padding: 20px;
+  /* padding: 20px; */
   height: 300px;
 }
 
@@ -148,13 +177,15 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  padding: 15px;
+  border-bottom: 1px solid #f1f1f1;
 }
 
 .metricHeader h3 {
-  font-size: 16px;
+  font-size: 14px;
   margin: 0;
-  color: var(--text-gray);
-  font-weight: 500;
+  color: #515153;
+  font-weight: 600;
 }
 
 .infoButton {
@@ -166,14 +197,24 @@
   align-items: center;
   justify-content: center;
 }
-
+.metricBody {
+  padding: 0px 15px;
+}
 .metricValue {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 4px;
   display: flex;
-  align-items: center;
+  align-items: self-start;
   gap: 10px;
+  color: #000000;
+
+  justify-content: space-between;
+}
+.growth {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .growthIndicator {
@@ -238,7 +279,6 @@
 .cityMetricItem {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
 }
 
 .cityDot {
@@ -249,17 +289,19 @@
 }
 
 .cityName {
-  width: 110px;
+  width: 100px;
   font-size: 14px;
-  color: #374151;
+  font-weight: 400;
+  color: #7d7d7e;
 }
 
 .cityAmount {
   width: 70px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   text-align: right;
   margin-right: 10px;
+  color: #000000;
 }
 
 .cityPercentage {
@@ -267,11 +309,12 @@
   font-size: 14px;
   text-align: right;
   margin-right: 15px;
-  color: var(--text-gray);
+  color: #7d7d7e;
+  font-weight: 400;
 }
 
 .cityGrowth {
-  width: 45px;
+  width: 60px;
   font-size: 14px;
   text-align: right;
   font-weight: 500;
@@ -282,6 +325,7 @@
   padding: 20px;
   border-top: 1px solid var(--border-color);
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .dataSectionHeader {
@@ -289,6 +333,12 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  position: sticky;
+  top: calc(var(--header-height) + 60px);
+  background-color: white;
+  z-index: 8;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .sectionTitle h2 {
@@ -328,15 +378,18 @@
   border: 1px solid var(--border-color);
   border-radius: 8px;
   position: relative;
+  min-width: 1140px;
 }
 .mainheader {
   /* border: 1px solid red; */
 }
 .categoryHeaders {
   display: flex;
-  /* padding: 12px 0; */
   background-color: white;
   border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 .nameColumn {
