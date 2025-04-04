@@ -1,23 +1,4 @@
-:root {
-  --success-color: #10b981;
-  --danger-color: #ef4444;
-  --border-color: #e5e7eb;
-  --bg-color: #f9fafb;
-  --text-gray: #6b7280;
-  --text-dark: #111827;
-  --filter-button-color: #036e29;
-  --header-height: 60px;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--bg-color);
-}
-
-html {
-  background-color: var(--bg-color);
-}
+/* Global styles are now in globals.css */
 
 .dashboardContainer {
   height: 100vh;
@@ -131,12 +112,12 @@ html {
 }
 
 .platformTag.zepto {
-  color: rgba(3, 27, 21, 0.7);
+  color: rgba(3, 27, 21, 0.2);
   margin-right: 10px;
 }
 
 .platformTag.instamart {
-  color: rgba(3, 27, 21, 0.7);
+  color: rgba(3, 27, 21, 0.2);
 }
 
 .platformTag.active {
@@ -246,14 +227,14 @@ html {
 
 .ringWrapper {
   position: relative;
-  width: 140px;
-  height: 140px;
+  width: 200px;
+  height: 110px;
   margin-bottom: 15px;
 }
 
 .ringCenter {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -427,7 +408,9 @@ html {
 }
 .availabilityCategoryHeading {
   padding: 10px 0px;
-  color: #013025;
+  color: rgba(1, 48, 37, 1);
+  font-weight: 700;
+  font-size: 15px;
 }
 .items1 {
   display: flex;

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Mulish } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const mulish = Mulish({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-inter",
+  variable: "--font-mulish",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.variable}>{children}</body>
+      <body className={mulish.variable}>{children}</body>
     </html>
   );
 }

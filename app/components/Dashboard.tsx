@@ -7,35 +7,99 @@ import Image from "next/image";
 import { useDashboardData } from "../hooks/useDashboardData";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { SkuItem, CityItem, CityMetric } from "../types/dashboardTypes";
+import {
+  testCubeApiAvailability,
+  testCubeApiWithDirectQuery,
+} from "../services/cubeService";
 
 export default function Dashboard() {
   const {
     dateRange,
     selectedPlatforms,
     togglePlatform,
-    skuData: initialSkuData,
-    cityData: initialCityData,
+    skuData: apiSkuData,
+    cityData: apiCityData,
     cityMetrics,
     salesData,
     itemsSoldData,
     revenueData,
     loading,
+    error,
+    data: rawData,
   } = useDashboardData();
+
+  console.log("Dashboard received sales data:", salesData);
+  console.log("Dashboard received items sold data:", itemsSoldData);
+  console.log("Total Sales Value:", salesData.totalSales);
+  console.log("Total Quantity Sold Value:", itemsSoldData.totalSold);
+
+  // Check if we're using real data or fallback
+  useEffect(() => {
+    if (!loading) {
+      console.log("🔍 Checking data sources:");
+
+      // Check sales data
+      const salesCardData = rawData["blinkit-insights-sku-sales_mrp"];
+      console.log(
+        "📊 Sales data:",
+        salesCardData?.data?.length > 0 ? "REAL DATA" : "FALLBACK DATA"
+      );
+
+      // Check items sold data
+      const itemsCardData = rawData["blinkit-insights-sku-qty_sold"];
+      console.log(
+        "📊 Items sold data:",
+        itemsCardData?.data?.length > 0 ? "REAL DATA" : "FALLBACK DATA"
+      );
+
+      // Check city metrics data
+      const cityMetricsData = rawData["blinkit-insights-city-sales_mrp_sum"];
+      console.log(
+        "📊 City metrics data:",
+        cityMetricsData?.data?.length > 0 ? "REAL DATA" : "FALLBACK DATA"
+      );
+
+      // Check SKU data
+      const skuCardData = rawData["blinkit-insights-sku"];
+      console.log(
+        "📊 SKU data:",
+        skuCardData?.data?.length > 0 ? "REAL DATA" : "FALLBACK DATA"
+      );
+
+      // Check city data
+      const cityCardData = rawData["blinkit-insights-city"];
+      console.log(
+        "📊 City data:",
+        cityCardData?.data?.length > 0 ? "REAL DATA" : "FALLBACK DATA"
+      );
+
+      // Check if there was any API error
+      if (error) {
+        console.error("❌ API Error:", error);
+      }
+    }
+  }, [loading, rawData, error]);
+
+  // Destructure values from salesData and itemsSoldData
+  const { totalSales, salesGrowth, lastMonthSales } = salesData;
+  const { totalSold, soldGrowth, lastMonthSold } = itemsSoldData;
+  const { totalRevenue, revenueGrowth } = revenueData;
+
+  // References for initial load
+  const initialLoadRef = useRef(false);
 
   // Local state to handle user interactions
   const [skuData, setSkuData] = useState<SkuItem[]>([]);
   const [cityData, setCityData] = useState<CityItem[]>([]);
 
-  // Update local state when API data changes - use a ref to prevent infinite updates
-  const initialLoadRef = useRef(false);
-
+  // Update local state when API data changes
   useEffect(() => {
     if (!loading && !initialLoadRef.current) {
-      setSkuData(initialSkuData);
-      setCityData(initialCityData);
+      setSkuData(apiSkuData);
+      setCityData(apiCityData);
       initialLoadRef.current = true;
     }
-  }, [loading, initialSkuData, initialCityData]);
+  }, [loading, apiSkuData, apiCityData]);
 
   // Create stable toggle functions
   const toggleSKUSelection = useCallback((id: number) => {
@@ -54,10 +118,44 @@ export default function Dashboard() {
     );
   }, []);
 
-  // Extract values from API data
-  const { totalSales, salesGrowth, lastMonthSales } = salesData;
-  const { totalSold, soldGrowth, lastMonthSold } = itemsSoldData;
-  const { totalRevenue, revenueGrowth } = revenueData;
+  // Test API availability on component mount
+  useEffect(() => {
+    const testApi = async () => {
+      console.log("🧪 Testing Cube.js API availability from Dashboard...");
+
+      // First try the original test
+      const isApiAvailable = await testCubeApiAvailability();
+      console.log(
+        `🧪 Original API test result: ${
+          isApiAvailable ? "AVAILABLE" : "UNAVAILABLE"
+        }`
+      );
+
+      // Then try the direct query test
+      const isDirectApiAvailable = await testCubeApiWithDirectQuery();
+      console.log(
+        `🧪 Direct API test result: ${
+          isDirectApiAvailable ? "AVAILABLE" : "UNAVAILABLE"
+        }`
+      );
+
+      // Overall result
+      const apiStatus = isApiAvailable || isDirectApiAvailable;
+      console.log(
+        `🧪 Overall API availability: ${
+          apiStatus ? "AVAILABLE" : "UNAVAILABLE"
+        }`
+      );
+
+      if (!apiStatus) {
+        console.log(
+          "🧪 API is unavailable, using fallback data for all components"
+        );
+      }
+    };
+
+    testApi();
+  }, []);
 
   return (
     <div className={styles.dashboardContainer}>
