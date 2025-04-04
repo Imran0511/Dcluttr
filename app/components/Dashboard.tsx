@@ -11,6 +11,7 @@ import {
   testCubeApiAvailability,
   testCubeApiWithDirectQuery,
 } from "../services/cubeService";
+import { dashboardConfig } from "../config/dashboardConfig";
 
 export default function Dashboard() {
   const {
@@ -157,11 +158,17 @@ export default function Dashboard() {
     testApi();
   }, []);
 
+  // Get card titles from dashboardConfig
+  const getCardTitle = useCallback((cardId: string) => {
+    const card = dashboardConfig.cards.find((card) => card.id === cardId);
+    return card?.title || "No Title"; // Fallback if card not found
+  }, []);
+
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.dashboard}>
         <div className={styles.header}>
-          <h1>Quick Commerce</h1>
+          <h1>{dashboardConfig.name}</h1>
           <div className={styles.headerRight}>
             <button className={styles.chartButton}>
               <Image
@@ -243,7 +250,7 @@ export default function Dashboard() {
         <div className={styles.metricsContainer}>
           <div className={styles.metricCard}>
             <div className={styles.metricHeader}>
-              <h3>Sales (MRP)</h3>
+              <h3>{getCardTitle("blinkit-insights-sku-sales_mrp")}</h3>
               <button className={styles.infoButton}>
                 <Image
                   src="/icons/help.svg"
@@ -276,7 +283,7 @@ export default function Dashboard() {
           </div>
           <div className={styles.metricCard}>
             <div className={styles.metricHeader}>
-              <h3>Total Quantity Sold</h3>
+              <h3>{getCardTitle("blinkit-insights-sku-qty_sold")}</h3>
               <button className={styles.infoButton}>
                 <Image
                   src="/icons/help.svg"
@@ -310,7 +317,7 @@ export default function Dashboard() {
 
           <div className={styles.metricCard}>
             <div className={styles.metricHeader}>
-              <h3>Top Cities</h3>
+              <h3>{getCardTitle("blinkit-insights-city-sales_mrp_sum")}</h3>
               <button className={styles.infoButton}>
                 <Image
                   src="/icons/help.svg"
@@ -368,8 +375,12 @@ export default function Dashboard() {
         <div className={styles.dataSection}>
           <div className={styles.dataSectionHeader}>
             <div className={styles.sectionTitle}>
-              <h2>SKU level data</h2>
-              <p>Analytics for all your SKUs</p>
+              <h2>{getCardTitle("blinkit-insights-sku")}</h2>
+              <p>
+                {dashboardConfig.cards.find(
+                  (card) => card.id === "blinkit-insights-sku"
+                )?.description || "Analytics for all your SKUs"}
+              </p>
             </div>
             <div className={styles.filterButton}>
               <span>Filters(1)</span>
@@ -598,8 +609,12 @@ export default function Dashboard() {
         <div className={styles.dataSection}>
           <div className={styles.dataSectionHeader}>
             <div className={styles.sectionTitle}>
-              <h2>City level data</h2>
-              <p>Analytics for all your Cities</p>
+              <h2>{getCardTitle("blinkit-insights-city")}</h2>
+              <p>
+                {dashboardConfig.cards.find(
+                  (card) => card.id === "blinkit-insights-city"
+                )?.description || "Analytics for all cities"}
+              </p>
             </div>
             <div className={styles.filterButton}>
               <span>Filters(1)</span>

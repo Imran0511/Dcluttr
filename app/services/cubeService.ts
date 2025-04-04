@@ -444,19 +444,19 @@ export async function fetchAllCardData(): Promise<CardData> {
           }
         } catch (error) {
           console.error(`❌ All attempts failed for card ${card.id}:`, error);
-          // Use fallback data for this card
+          // Use fallback data for this card based on the card ID from config
           if (card.id === "blinkit-insights-sku-sales_mrp") {
-            console.log("⚠️ Using fallback data for sales chart");
+            console.log(`⚠️ Using fallback data for "${card.title}" card`);
             cardData[card.id] = {
               data: [{ "blinkit_insights_sku.sales_mrp_sum": 125490 }],
             };
           } else if (card.id === "blinkit-insights-sku-qty_sold") {
-            console.log("⚠️ Using fallback data for quantity sold");
+            console.log(`⚠️ Using fallback data for "${card.title}" card`);
             cardData[card.id] = {
               data: [{ "blinkit_insights_sku.qty_sold": 12549 }],
             };
           } else if (card.id === "blinkit-insights-city-sales_mrp_sum") {
-            console.log("⚠️ Using fallback data for city sales");
+            console.log(`⚠️ Using fallback data for "${card.title}" card`);
             cardData[card.id] = {
               data: [
                 {
@@ -507,15 +507,22 @@ export async function fetchAllCardData(): Promise<CardData> {
     console.error("❌ Error fetching all card data:", error);
 
     // Provide fallback data for essential cards even in case of overall failure
-    if (!cardData["blinkit-insights-sku-sales_mrp"]) {
-      console.log("⚠️ Using global fallback for sales data");
+    const salesCard = dashboardConfig.cards.find(
+      (c) => c.id === "blinkit-insights-sku-sales_mrp"
+    );
+    const qtyCard = dashboardConfig.cards.find(
+      (c) => c.id === "blinkit-insights-sku-qty_sold"
+    );
+
+    if (!cardData["blinkit-insights-sku-sales_mrp"] && salesCard) {
+      console.log(`⚠️ Using global fallback for "${salesCard.title}" data`);
       cardData["blinkit-insights-sku-sales_mrp"] = {
         data: [{ "blinkit_insights_sku.sales_mrp_sum": 125490 }],
       };
     }
 
-    if (!cardData["blinkit-insights-sku-qty_sold"]) {
-      console.log("⚠️ Using global fallback for quantity sold data");
+    if (!cardData["blinkit-insights-sku-qty_sold"] && qtyCard) {
+      console.log(`⚠️ Using global fallback for "${qtyCard.title}" data`);
       cardData["blinkit-insights-sku-qty_sold"] = {
         data: [{ "blinkit_insights_sku.qty_sold": 12549 }],
       };
