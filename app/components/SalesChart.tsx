@@ -58,7 +58,7 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
     const yStep = (yMax - yMin) / ySteps;
 
     ctx.fillStyle = "#6b7280";
-    ctx.font = "12px Inter, sans-serif";
+    ctx.font = "12px Mulish, sans-serif";
     ctx.textAlign = "right";
 
     for (let i = 0; i <= ySteps; i++) {
@@ -86,11 +86,11 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
       ctx.fillText(label, x, padding.top + chartHeight + 25);
     });
 
-    // Draw a red horizontal line to separate x-axis from legends
+    // Draw a grey horizontal line to separate x-axis from legends
     ctx.beginPath();
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 1;
-    ctx.moveTo(padding.left, padding.top + chartHeight + 35);
+    // ctx.strokeStyle = "#e5e7eb"; // Using the same grey color as grid lines
+    // ctx.lineWidth = 1;
+    // ctx.moveTo(padding.left, padding.top + chartHeight + 35);
     ctx.lineTo(width - padding.right, padding.top + chartHeight + 35);
     ctx.stroke();
 
@@ -159,7 +159,7 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
     // Add legend in the extra space we reserved below the chart
     const legendY = height - 5; // Position near the bottom of the canvas
     const legendSpacing = 120;
-    const legendStartX = padding.left + 30; // Adjusted to align with shifted chart elements
+    const legendStartX = padding.left - 20; // Set to padding.left to move legend all the way to the left with just the padding
 
     // This month legend
     ctx.fillStyle = primaryColor;
@@ -168,7 +168,7 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
     ctx.fill();
 
     ctx.fillStyle = "#374151";
-    ctx.font = "12px Inter, sans-serif";
+    ctx.font = "12px Mulish, sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("This Month", legendStartX + 10, legendY + 4);
 
@@ -179,6 +179,7 @@ export default function SalesChart({ type = "sales" }: SalesChartProps) {
     ctx.fill();
 
     ctx.fillStyle = "#374151";
+    ctx.font = "12px Mulish, sans-serif";
     ctx.fillText("Last Month", legendStartX + legendSpacing + 10, legendY + 4);
   }, [type]);
 

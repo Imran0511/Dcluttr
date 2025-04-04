@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
-import { fetchAllCardData } from "../services/cubeService";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { fetchAllCardData, CardData } from "../services/cubeService";
 import type {
   SkuItem,
   CityItem,
@@ -9,19 +9,10 @@ import type {
   RevenueData,
 } from "../types/dashboardTypes";
 
-// Define a type for the API response data
-type ApiResponseData = Record<
-  string,
-  {
-    data: Array<Record<string, unknown>>;
-    meta?: Record<string, unknown>;
-  }
->;
-
 export function useDashboardData() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<ApiResponseData>({});
+  const [data, setData] = useState<CardData>({});
   const [dateRange] = useState("Feb 01, 2025 - Feb 28, 2025");
   const [selectedPlatforms, setSelectedPlatforms] = useState([
     "blinkit",
@@ -29,31 +20,26 @@ export function useDashboardData() {
     "instamart",
   ]);
 
-  // Helper functions - moved to the top before they're used
-  const formatNumber = (num: number) => {
+  // Helper functions
+  const formatNumber = (num: number): string => {
     return new Intl.NumberFormat("en-IN").format(num);
   };
 
-  const formatCurrency = (num: number) => {
+  const formatCurrency = (num: number): string => {
+    // Handle zero or very small values
+    if (num === 0) {
+      return "₹0";
+    }
+
     if (num >= 100000) {
-      return `${(num / 100000).toFixed(1)}L`;
+      return `₹${(num / 100000).toFixed(1)}L`;
     } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
+      return `₹${(num / 1000).toFixed(1)}K`;
     }
-    return num.toFixed(2);
+    return `₹${num.toFixed(0)}`;
   };
 
-  // Simple hash function for consistent pseudorandom values
-  const hashCode = (str: string): number => {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return Math.abs(hash);
-  };
-
+  // Load data from API
   useEffect(() => {
     async function loadData() {
       try {
@@ -72,15 +58,115 @@ export function useDashboardData() {
     loadData();
   }, []);
 
-  // Memoize the computed data to prevent unnecessary recalculations
+  // Toggle platform selection
+  const togglePlatform = useCallback((platform: string) => {
+    setSelectedPlatforms((prev) => {
+      if (prev.includes(platform)) {
+        // Remove platform if already selected
+        return prev.filter((p) => p !== platform);
+      } else {
+        // Add platform if not selected
+        return [...prev, platform];
+      }
+    });
+  }, []);
+
+  // Process city metrics for the pie chart
+  const cityMetrics = useMemo((): CityMetric[] => {
+    console.log("📊 Processing city metrics data...");
+    console.log(
+      "📋 Raw city metrics data:",
+      data["blinkit-insights-city-sales_mrp_sum"]?.data?.length || 0,
+      "records"
+    );
+
+    if (!data["blinkit-insights-city-sales_mrp_sum"]?.data?.length) {
+      console.log("⚠️ No city metrics data available, using fallback");
+      // Fallback data when API data is not available
+      return [
+        {
+          city: "New Delhi",
+          amount: "₹26.5L",
+          percentage: 27,
+          growth: 4.51,
+          positive: false,
+        },
+        {
+          city: "Mumbai",
+          amount: "₹36.4L",
+          percentage: 37,
+          growth: 4.52,
+          positive: true,
+        },
+        {
+          city: "West Bengal",
+          amount: "₹12.2L",
+          percentage: 12,
+          growth: 4.53,
+          positive: false,
+        },
+        {
+          city: "Others",
+          amount: "₹24.3L",
+          percentage: 24,
+          growth: 4.54,
+          positive: true,
+        },
+      ];
+    }
+
+    const cityData = data["blinkit-insights-city-sales_mrp_sum"].data;
+    console.log(
+      "✅ Using real city metrics data with",
+      cityData.length,
+      "cities"
+    );
+
+    // Calculate total for percentages
+    const total = cityData.reduce(
+      (sum: number, city: Record<string, unknown>) =>
+        sum + ((city["blinkit_insights_city.sales_mrp_sum"] as number) || 0),
+      0
+    );
+
+    // Transform the API data
+    return cityData.map((city: Record<string, unknown>, index: number) => {
+      const salesValue =
+        (city["blinkit_insights_city.sales_mrp_sum"] as number) || 0;
+      const percentage = total > 0 ? Math.round((salesValue / total) * 100) : 0;
+
+      // Generate consistent growth values
+      const growthBase = 4.5;
+      const growth = Number((growthBase + index * 0.01).toFixed(2));
+
+      return {
+        city: (city["blinkit_insights_city.name"] as string) || "Unknown",
+        amount: formatCurrency(salesValue),
+        percentage,
+        growth,
+        positive: index % 2 === 1, // Alternating for demo
+      };
+    });
+  }, [data]);
+
+  // Process SKU data from the API response
   const skuData = useMemo((): SkuItem[] => {
-    if (!data["blinkit-insights-sku"] || loading) {
+    console.log("📊 Processing SKU data...");
+    console.log(
+      "📋 Raw SKU data:",
+      data["blinkit-insights-sku"]?.data?.length || 0,
+      "records"
+    );
+
+    if (!data["blinkit-insights-sku"]?.data?.length) {
+      console.log("⚠️ No SKU data available, using fallback");
+      // Fallback data when API data is not available
       return [
         {
           id: 1,
           selected: true,
           name: "Protein Bar 100g",
-          sales: "₹93,132.12",
+          sales: "₹93,132",
           salesPercentage: 2.4,
           outOfStock: "1.68%",
           totalInventory: "931.9",
@@ -93,7 +179,7 @@ export function useDashboardData() {
           id: 2,
           selected: true,
           name: "Choco Bar 100g",
-          sales: "₹8,526.32",
+          sales: "₹8,526",
           salesPercentage: 6.79,
           outOfStock: "6.79%",
           totalInventory: "679",
@@ -105,9 +191,9 @@ export function useDashboardData() {
         {
           id: 3,
           selected: true,
-          name: "Choco Bar 100g",
-          sales: "₹7,012.72",
-          salesPercentage: 2.4,
+          name: "Energy Bar 100g",
+          sales: "₹7,012",
+          salesPercentage: -2.4,
           outOfStock: "3.28%",
           totalInventory: "328",
           avgRank: "4",
@@ -119,42 +205,63 @@ export function useDashboardData() {
       ];
     }
 
-    // Here you would transform the Cube.JS data into the format expected by your UI
+    console.log("✅ Using real SKU data");
+    // Transform the API data
     return data["blinkit-insights-sku"].data.map(
-      (item: Record<string, unknown>, index: number) => ({
-        id: index + 1,
-        selected: index < 3,
-        name:
-          (item["blinkit_insights_sku.name"] as string) ||
-          `Product ${index + 1}`,
-        sales: `₹${formatNumber(
-          (item["blinkit_insights_sku.sales_mrp_sum"] as number) || 0
-        )}`,
-        salesPercentage: 2.4, // This would come from comparing with previous period
-        outOfStock: `${
-          (item["blinkit_scraping_stream.on_shelf_availability"] as number) || 0
-        }%`,
-        totalInventory: formatNumber(
-          (item["blinkit_insights_sku.inv_qty"] as number) || 0
-        ),
-        avgRank: (item["blinkit_scraping_stream.rank_avg"] as string) || "0",
-        estTraffic: formatNumber(Math.round(Math.random() * 10000)),
-        estImpressions: formatNumber(Math.round(Math.random() * 20000)),
-        cr: `${(Math.random() * 5).toFixed(1)}%`,
-        growthNegative: index % 3 === 2, // Just for demonstration
-      })
-    );
-  }, [data, loading]);
+      (item: Record<string, unknown>, index: number) => {
+        const salesValue =
+          (item["blinkit_insights_sku.sales_mrp_sum"] as number) || 0;
+        const onShelfAvailability =
+          (item["blinkit_scraping_stream.on_shelf_availability"] as number) ||
+          0;
+        const outOfStock = 100 - onShelfAvailability;
 
-  // Memoize city data
+        // Generate a random growth percentage that's consistent for the same index
+        const randomGrowth =
+          (((index * 7919) % 1000) / 100) * (index % 2 === 0 ? 1 : -1);
+
+        return {
+          id: index + 1,
+          selected: index < 3,
+          name:
+            (item["blinkit_insights_sku.name"] as string) ||
+            `Product ${index + 1}`,
+          sales: `₹${formatNumber(salesValue)}`,
+          salesPercentage: Number(randomGrowth.toFixed(1)),
+          outOfStock: `${outOfStock.toFixed(2)}%`,
+          totalInventory: formatNumber(
+            (item["blinkit_insights_sku.inv_qty"] as number) || 0
+          ),
+          avgRank: String(
+            (item["blinkit_scraping_stream.rank_avg"] as number) || 0
+          ),
+          estTraffic: formatNumber(Math.round(Math.random() * 10000)),
+          estImpressions: formatNumber(Math.round(Math.random() * 20000)),
+          cr: `${(Math.random() * 5).toFixed(1)}%`,
+          growthNegative: randomGrowth < 0,
+        };
+      }
+    );
+  }, [data]);
+
+  // Process city data from the API response
   const cityData = useMemo((): CityItem[] => {
-    if (!data["blinkit-insights-city"] || loading) {
+    console.log("📊 Processing city data...");
+    console.log(
+      "📋 Raw city data:",
+      data["blinkit-insights-city"]?.data?.length || 0,
+      "records"
+    );
+
+    if (!data["blinkit-insights-city"]?.data?.length) {
+      console.log("⚠️ No city data available, using fallback");
+      // Fallback data when API data is not available
       return [
         {
           id: 1,
           selected: true,
-          name: "Delhi",
-          sales: "₹93,132.12",
+          name: "New Delhi",
+          sales: "₹93,132",
           salesPercentage: 1.68,
           outOfStock: "1.68%",
           totalInventory: "931.9",
@@ -166,9 +273,9 @@ export function useDashboardData() {
         {
           id: 2,
           selected: true,
-          name: "Bengaluru",
-          sales: "₹8,526.32",
-          salesPercentage: 2.4,
+          name: "Mumbai",
+          sales: "₹85,263",
+          salesPercentage: -2.4,
           outOfStock: "6.79%",
           totalInventory: "679",
           avgRank: "7",
@@ -180,177 +287,121 @@ export function useDashboardData() {
       ];
     }
 
-    // Transform Cube.JS data
+    console.log("✅ Using real city data");
+    // Transform the API data
     return data["blinkit-insights-city"].data.map(
-      (item: Record<string, unknown>, index: number) => ({
-        id: index + 1,
-        selected: index < 2,
-        name:
-          (item["blinkit_insights_city.name"] as string) || `City ${index + 1}`,
-        sales: `₹${formatNumber(
-          (item["blinkit_insights_city.sales_mrp_sum"] as number) || 0
-        )}`,
-        salesPercentage: Number((Math.random() * 3).toFixed(2)),
-        outOfStock: `${(Math.random() * 10).toFixed(2)}%`,
-        totalInventory: formatNumber(
-          (item["blinkit_insights_city.inv_qty"] as number) || 0
-        ),
-        avgRank: (Math.random() * 10).toFixed(1),
-        estTraffic: formatNumber(Math.round(Math.random() * 15000)),
-        estImpressions: formatNumber(Math.round(Math.random() * 30000)),
-        cr: `${(Math.random() * 5).toFixed(1)}%`,
-        growthNegative: index % 2 === 1, // Alternate for demonstration
-      })
+      (item: Record<string, unknown>, index: number) => {
+        const salesValue =
+          (item["blinkit_insights_city.sales_mrp_sum"] as number) || 0;
+
+        // Generate deterministic "random" value based on index
+        const growthValue =
+          (((index * 3511) % 600) / 100) * (index % 2 === 0 ? 1 : -1);
+
+        return {
+          id: index + 1,
+          selected: index < 2,
+          name:
+            (item["blinkit_insights_city.name"] as string) ||
+            `City ${index + 1}`,
+          sales: `₹${formatNumber(salesValue)}`,
+          salesPercentage: Number(growthValue.toFixed(2)),
+          outOfStock: `${(Math.random() * 10).toFixed(2)}%`,
+          totalInventory: formatNumber(
+            (item["blinkit_insights_city.inv_qty"] as number) || 0
+          ),
+          avgRank: (Math.random() * 10).toFixed(1),
+          estTraffic: formatNumber(Math.round(Math.random() * 15000)),
+          estImpressions: formatNumber(Math.round(Math.random() * 30000)),
+          cr: `${(Math.random() * 5).toFixed(1)}%`,
+          growthNegative: growthValue < 0,
+        };
+      }
     );
-  }, [data, loading]);
+  }, [data]);
 
-  // Memoize city metrics
-  const cityMetrics = useMemo((): CityMetric[] => {
-    if (!data["blinkit-insights-city-sales_mrp_sum"] || loading) {
-      return [
-        {
-          city: "New Delhi",
-          amount: "₹26.5L",
-          percentage: 35,
-          growth: 1.2,
-          positive: true,
-        },
-        {
-          city: "Mumbai",
-          amount: "₹36.4L",
-          percentage: 23,
-          growth: 3.3,
-          positive: false,
-        },
-        {
-          city: "West Bengal",
-          amount: "₹12.2L",
-          percentage: 21,
-          growth: 2.3,
-          positive: false,
-        },
-        {
-          city: "Others",
-          amount: "₹24.3L",
-          percentage: 9,
-          growth: 1.09,
-          positive: true,
-        },
-      ];
-    }
-
-    // Calculate total for percentages
-    const cityData = data["blinkit-insights-city-sales_mrp_sum"].data;
-    const total = cityData.reduce(
-      (sum: number, city: Record<string, unknown>) =>
-        sum + ((city["blinkit_insights_city.sales_mrp_sum"] as number) || 0),
-      0
-    );
-
-    // Use a seed to make random values consistent between renders
-    const seed = total.toString();
-
-    return cityData.map((city: Record<string, unknown>, index: number) => {
-      const sales =
-        (city["blinkit_insights_city.sales_mrp_sum"] as number) || 0;
-      const percentage = total > 0 ? Math.round((sales / total) * 100) : 0;
-
-      // Use hash-based pseudorandom values instead of pure random
-      const hash = hashCode(`${seed}-${index}`);
-      const growthValue = (hash % 500) / 100; // Value between 0 and 5
-      const positiveGrowth = hash % 2 === 0;
-
-      return {
-        city:
-          (city["blinkit_insights_city.name"] as string) || `City ${index + 1}`,
-        amount: `₹${formatCurrency(sales)}`,
-        percentage,
-        growth: Number(growthValue.toFixed(2)),
-        positive: positiveGrowth,
-      };
-    });
-  }, [data, loading]);
-
-  // Memoize sales data
+  // Process sales data
   const salesData = useMemo((): SalesData => {
-    if (!data["blinkit-insights-sku-sales_mrp"] || loading) {
-      return {
-        totalSales: "125.49",
-        salesGrowth: 2.4,
-        lastMonthSales: "119.69",
-      };
-    }
+    const cardData = data["blinkit-insights-sku-sales_mrp"];
+    let totalSales = 0;
 
-    const salesData = data["blinkit-insights-sku-sales_mrp"].data[0];
-    const totalSales =
-      (salesData["blinkit_insights_sku.sales_mrp_sum"] as number) || 0;
-    // This would need to be calculated based on previous period data
-    const lastMonthSales = totalSales * 0.95; // Just an example
-    const salesGrowth = ((totalSales - lastMonthSales) / lastMonthSales) * 100;
+    if (cardData?.data?.length > 0) {
+      // Try to get the value, use 0 if it's undefined or null
+      const salesValue = cardData.data[0]["blinkit_insights_sku.sales_mrp_sum"];
+      totalSales = typeof salesValue === "number" ? salesValue : 0;
 
-    return {
-      totalSales: totalSales.toFixed(2),
-      salesGrowth: Number(salesGrowth.toFixed(1)),
-      lastMonthSales: lastMonthSales.toFixed(2),
-    };
-  }, [data, loading]);
-
-  // Memoize items sold data
-  const itemsSoldData = useMemo((): ItemsSoldData => {
-    if (!data["blinkit-insights-sku-qty_sold"] || loading) {
-      return {
-        totalSold: "125.49",
-        soldGrowth: 2.4,
-        lastMonthSold: "119.69",
-      };
-    }
-
-    const salesData = data["blinkit-insights-sku-qty_sold"].data[0];
-    const totalSold =
-      (salesData["blinkit_insights_sku.qty_sold"] as number) || 0;
-    // This would need to be calculated based on previous period data
-    const lastMonthSold = totalSold * 0.95; // Just an example
-    const soldGrowth = ((totalSold - lastMonthSold) / lastMonthSold) * 100;
-
-    return {
-      totalSold: totalSold.toFixed(2),
-      soldGrowth: Number(soldGrowth.toFixed(1)),
-      lastMonthSold: lastMonthSold.toFixed(2),
-    };
-  }, [data, loading]);
-
-  // Memoize revenue data
-  const revenueData = useMemo((): RevenueData => {
-    if (!data["blinkit-insights-city-sales_mrp_sum"] || loading) {
-      return {
-        totalRevenue: "₹68.2L",
-        revenueGrowth: 2.2,
-      };
-    }
-
-    const cityData = data["blinkit-insights-city-sales_mrp_sum"].data;
-    const total = cityData.reduce(
-      (sum: number, city: Record<string, unknown>) =>
-        sum + ((city["blinkit_insights_city.sales_mrp_sum"] as number) || 0),
-      0
-    );
-
-    return {
-      totalRevenue: `₹${formatCurrency(total)}`,
-      revenueGrowth: 2.2, // This would need calculation with previous period
-    };
-  }, [data, loading]);
-
-  // Toggle functions for platform and item selection
-  const togglePlatform = (platform: string) => {
-    if (selectedPlatforms.includes(platform)) {
-      if (selectedPlatforms.length > 1) {
-        setSelectedPlatforms((prev) => prev.filter((p) => p !== platform));
+      // If we still have 0, use fallback value
+      if (totalSales === 0) {
+        console.log("Using fallback value for total sales");
+        totalSales = 125490; // Fallback value
       }
     } else {
-      setSelectedPlatforms((prev) => [...prev, platform]);
+      // If no data at all, use fallback value
+      console.log("No sales data available, using fallback");
+      totalSales = 125490; // Fallback value
     }
-  };
+
+    // Calculate last month's sales as 5.3% less than current
+    const growthRate = 5.3;
+    const lastMonthSales = totalSales / (1 + growthRate / 100);
+
+    return {
+      totalSales: formatCurrency(totalSales),
+      salesGrowth: growthRate,
+      lastMonthSales: formatCurrency(lastMonthSales),
+    };
+  }, [data]);
+
+  // Process items sold data
+  const itemsSoldData = useMemo((): ItemsSoldData => {
+    const cardData = data["blinkit-insights-sku-qty_sold"];
+    let totalSold = 0;
+
+    if (cardData?.data?.length > 0) {
+      // Try to get the value, use fallback if it's undefined or null
+      const soldValue = cardData.data[0]["blinkit_insights_sku.qty_sold"];
+      totalSold = typeof soldValue === "number" ? soldValue : 0;
+
+      // If we still have 0, use fallback value
+      if (totalSold === 0) {
+        console.log("Using fallback value for items sold");
+        totalSold = 12549; // More realistic fallback value
+      }
+    } else {
+      // If no data at all, use fallback value
+      console.log("No items sold data available, using fallback");
+      totalSold = 12549; // More realistic fallback value
+    }
+
+    // Calculate last month's sold as 5.3% less than current
+    const growthRate = 5.3;
+    const lastMonthSold = totalSold / (1 + growthRate / 100);
+
+    return {
+      totalSold: formatNumber(Math.round(totalSold)),
+      soldGrowth: growthRate,
+      lastMonthSold: formatNumber(Math.round(lastMonthSold)),
+    };
+  }, [data]);
+
+  // Calculate total revenue data
+  const revenueData = useMemo((): RevenueData => {
+    // If we have city metrics, use that for total revenue
+    const totalFromCities = cityMetrics.reduce(
+      (sum: number, city: CityMetric) => {
+        // Extract numeric value from formatted currency
+        const numericValue =
+          parseFloat(city.amount.replace(/[₹L,]/g, "")) * 100000;
+        return sum + numericValue;
+      },
+      0
+    );
+
+    return {
+      totalRevenue: formatCurrency(totalFromCities),
+      revenueGrowth: 2.2,
+    };
+  }, [cityMetrics]);
 
   return {
     loading,
@@ -358,13 +409,12 @@ export function useDashboardData() {
     dateRange,
     selectedPlatforms,
     togglePlatform,
-    toggleSKUSelection: () => {}, // These are now managed in Dashboard.tsx
-    toggleCitySelection: () => {}, // These are now managed in Dashboard.tsx
     skuData,
     cityData,
     cityMetrics,
     salesData,
     itemsSoldData,
     revenueData,
+    data,
   };
 }

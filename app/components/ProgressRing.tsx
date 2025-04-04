@@ -2,60 +2,75 @@
 
 import styles from "./ProgressRing.module.css";
 
+interface Segment {
+  color: string;
+  percent: number;
+  startAngle: number;
+  endAngle: number;
+}
+
 export default function ProgressRing() {
-  const radius = 60;
-  const circumference = 2 * Math.PI * radius;
+  const radius = 100;
+  const center = { x: 100, y: 150 };
 
-  const colorSegments = [
-    { percent: 35, color: "#4E56C8" }, // New Delhi - blue
-    { percent: 23, color: "#E05252" }, // Mumbai - red
-    { percent: 21, color: "#EFBF31" }, // West Bengal - yellow
-    { percent: 9, color: "#8D8D8D" }, // Others - gray
-  ];
-
-  // Calculate stroke-dasharray for each segment
-  let startPercentage = 0;
-  const segments = colorSegments.map((segment) => {
-    const segmentLength = (segment.percent / 100) * circumference;
-    const gap = 2; // Small gap between segments
-    const dashArray = `${segmentLength - gap} ${
-      circumference - segmentLength + gap
-    }`;
-    const dashOffset = circumference - (startPercentage / 100) * circumference;
-    startPercentage += segment.percent;
-
-    return { dashArray, dashOffset, color: segment.color };
+  // Define segments with their colors and percentages
+  const segments: Segment[] = [
+    { percent: 24, color: "#8D8D8D" }, // Others - gray (leftmost)
+    { percent: 12, color: "#EFBF31" }, // West Bengal - yellow
+    { percent: 37, color: "#E05252" }, // Mumbai - red
+    { percent: 27, color: "#4E56C8" }, // New Delhi - blue (rightmost)
+  ].map((segment, index, array) => {
+    // Calculate the start and end angles for each segment
+    const total = array.reduce((sum, s) => sum + s.percent, 0);
+    const startPercent = array
+      .slice(0, index)
+      .reduce((sum, s) => sum + s.percent, 0);
+    const startAngle = (startPercent / total) * Math.PI;
+    const endAngle = ((startPercent + segment.percent) / total) * Math.PI;
+    return { ...segment, startAngle, endAngle };
   });
+
+  // Function to calculate point coordinates on the arc
+  const getPointOnArc = (angle: number) => {
+    return {
+      x: center.x + radius * Math.cos(angle),
+      y: center.y + radius * Math.sin(angle),
+    };
+  };
+
+  // Function to create SVG arc path
+  const createArcPath = (startAngle: number, endAngle: number) => {
+    const start = getPointOnArc(startAngle);
+    const end = getPointOnArc(endAngle);
+    const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
+
+    return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+  };
 
   return (
     <svg
-      width="140"
-      height="140"
-      viewBox="0 0 140 140"
+      width="200"
+      height="150"
+      viewBox="0 0 200 200"
       className={styles.progressRing}
     >
-      {/* Background circle */}
-      <circle
-        cx="70"
-        cy="70"
-        r="65"
+      {/* Background semi-circle */}
+      {/* <path
+        d="M 20,100 A 80,80 0 0,1 180,100"
         fill="none"
         stroke="#E6E7E9"
         strokeWidth="12"
-      />
+        strokeLinecap="round"
+      /> */}
 
       {/* Colored segments */}
       {segments.map((segment, index) => (
-        <circle
+        <path
           key={index}
-          cx="70"
-          cy="70"
-          r={radius}
+          d={createArcPath(segment.startAngle, segment.endAngle)}
           fill="none"
           stroke={segment.color}
           strokeWidth="16"
-          strokeDasharray={segment.dashArray}
-          strokeDashoffset={segment.dashOffset}
           strokeLinecap="round"
         />
       ))}
